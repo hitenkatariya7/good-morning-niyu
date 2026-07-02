@@ -1,0 +1,33 @@
+{
+  "startDate": "2026-07-02",
+  "today": {
+    "date": "2026-07-02",
+    "type": "memory",
+    "message": "Good morning Niyu!\n\nHope you slept well. Quick reminder from last night - be ready with that high protein mousse today, I've been thinking about it since I sent you that reel.\n\nCan't wait to try it.",
+    "signoff": "- your favorite taste tester",
+    "photos": ["photos/2026-07-02.jpg"],
+    "memoryTitle": ""
+  },
+  "fallbacks": [
+    { "message": "Good morning Niyu. However today goes, just know you crossed my mind before I even got out of bed.", "signoff": "" },
+    { "message": "Good morning to the person who makes my mornings worth waking up for.", "signoff": "" },
+    { "message": "No big update today, Niyu. Just wanted this to be the first thing you see.", "signoff": "" },
+    { "message": "Good morning. Have a slow coffee, a good breakfast, and a day that's kind to you.", "signoff": "" },
+    { "message": "Good morning Niyu. Sending you all the good energy for whatever today throws at you.", "signoff": "" },
+    { "message": "Some mornings don't need a big message. Just - good morning, I'm glad you exist.", "signoff": "" },
+    { "message": "Good morning. Wherever you are today, I hope it feels easy.", "signoff": "" },
+    { "message": "Good morning Niyu. This is your reminder to drink water, eat something good, and smile at least once because of me.", "signoff": "" },
+    { "message": "Good morning. I don't have a story for today, just a very simple fact: I'm lucky.", "signoff": "" },
+    { "message": "Good morning Niyu. Hope today treats you as well as you treat everyone around you.", "signoff": "" },
+    { "message": "Good morning. Rooting for your day before it's even started.", "signoff": "" },
+    { "message": "Good morning Niyu, from someone who's probably already thinking about what to say tomorrow.", "signoff": "" },
+    { "message": "Good morning. No news, no plans, just wanted to say your name and smile a little.", "signoff": "" },
+    { "message": "Good morning Niyu. May your chai be hot and your day be light.", "signoff": "" },
+    { "message": "Good morning. Take today one step at a time, I'm cheering for you from here.", "signoff": "" },
+    { "message": "Good morning Niyu. If today gets hard, remember someone's proud of you regardless.", "signoff": "" },
+    { "message": "Good morning. Just a small note to start your day with a little warmth.", "signoff": "" },
+    { "message": "Good morning Niyu. Hope your morning is calm before the day picks up pace.", "signoff": "" },
+    { "message": "Good morning. Sending you patience, good coffee, and a bit of luck for today.", "signoff": "" },
+    { "message": "Good morning Niyu. Nothing fancy today, just wanted to be the first good thing in your day.", "signoff": "" }
+  ]
+}
