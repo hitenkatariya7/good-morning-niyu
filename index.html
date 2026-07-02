@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Good Morning, Niyu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF5F1;
+    --paper-warm:#F6ECE5;
+    --ink:#3B2A35;
+    --ink-soft:#6E5A66;
+    --gold:#D9A441;
+    --blush:#F0C9C0;
+    --mauve:#B98CA5;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    color:var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow-x:hidden;
+  }
+
+  /* ---------- Sunrise ambient glow ---------- */
+  .sunrise{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(217,164,65,0.35), transparent 70%),
+      radial-gradient(ellipse 50% 35% at 50% 105%, rgba(240,201,192,0.5), transparent 70%);
+    animation: rise 3.5s ease-out forwards;
+    pointer-events:none;
+  }
+  @keyframes rise{
+    0%{ opacity:0; transform: translateY(6%); }
+    100%{ opacity:1; transform: translateY(0%); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .sunrise{ animation:none; opacity:1; }
+  }
+
+  /* ---------- Password gate ---------- */
+  #gate{
+    position:fixed; inset:0; z-index:10;
+    background:var(--paper);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:22px; padding:24px; text-align:center;
+    transition: opacity 0.6s ease;
+  }
+  #gate.hidden{ opacity:0; pointer-events:none; }
+  .gate-label{
+    font-family:'Caveat', cursive;
+    font-size:1.6rem;
+    color:var(--mauve);
+  }
+  #pwd{
+    font-family:'Work Sans', sans-serif;
+    font-size:1.1rem;
+    padding:14px 18px;
+    border-radius:14px;
+    border:1.5px solid var(--blush);
+    background:#fff;
+    color:var(--ink);
+    width:220px;
+    text-align:center;
+    outline:none;
+    letter-spacing:2px;
+  }
+  #pwd:focus{ border-color:var(--gold); }
+  #unlockBtn{
+    font-family:'Work Sans', sans-serif;
+    font-size:0.95rem;
+    letter-spacing:0.5px;
+    padding:12px 28px;
+    border-radius:999px;
+    border:none;
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  #unlockBtn:active{ transform:scale(0.97); }
+  #gateError{
+    font-size:0.85rem;
+    color:#b5546b;
+    height:16px;
+    opacity:0;
+    transition: opacity 0.2s ease;
+  }
+  #gateError.show{ opacity:1; }
+
+  /* ---------- Main card ---------- */
+  #app{
+    position:relative;
+    z-index:1;
+    width:100%;
+    max-width:460px;
+    margin:0 auto;
+    padding:48px 28px 60px;
+    opacity:0;
+    transition: opacity 0.8s ease;
+  }
+  #app.visible{ opacity:1; }
+
+  .eyebrow{
+    font-family:'Work Sans', sans-serif;
+    font-size:0.7rem;
+    letter-spacing:2.5px;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .date{
+    font-family:'Work Sans', sans-serif;
+    font-size:0.85rem;
+    color:var(--mauve);
+    text-align:center;
+    margin-bottom:28px;
+  }
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-optical-sizing:auto;
+    font-size:2.6rem;
+    line-height:1.15;
+    text-align:center;
+    margin:0 0 6px;
+    color:var(--ink);
+  }
+  h1 .script{
+    font-family:'Caveat', cursive;
+    font-weight:600;
+    color:var(--gold);
+    font-size:1.15em;
+    margin-left:8px;
+  }
+
+  .divider{
+    width:36px; height:1.5px;
+    background:var(--blush);
+    margin:22px auto;
+  }
+
+  .message{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:1.15rem;
+    line-height:1.65;
+    text-align:center;
+    color:var(--ink);
+    white-space:pre-wrap;
+  }
+
+  .memory-title{
+    font-family:'Caveat', cursive;
+    font-size:1.9rem;
+    color:var(--mauve);
+    text-align:center;
+    margin:0 0 4px;
+  }
+
+  .photos{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:14px;
+    margin:28px 0;
+  }
+  .photo-card{
+    background:#fff;
+    padding:10px 10px 22px;
+    border-radius:6px;
+    box-shadow: 0 10px 28px rgba(59,42,53,0.12);
+    transform: rotate(var(--r, -2deg));
+    transition: transform 0.3s ease;
+  }
+  .photo-card:nth-child(even){ --r: 2deg; }
+  .photo-card:nth-child(3n){ --r: -1.2deg; }
+  .photo-card img{
+    display:block;
+    width:150px;
+    height:180px;
+    object-fit:cover;
+    border-radius:2px;
+  }
+
+  .signoff{
+    font-family:'Caveat', cursive;
+    font-size:1.3rem;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:32px;
+  }
+
+  footer{
+    text-align:center;
+    margin-top:44px;
+    font-size:0.68rem;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+    opacity:0.5;
+    text-transform:uppercase;
+  }
+
+  @media (max-width:400px){
+    h1{ font-size:2.15rem; }
+    .message{ font-size:1.05rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="sunrise" aria-hidden="true"></div>
+
+<div id="gate">
+  <div class="gate-label">good morning belongs to Niyu only</div>
+  <input id="pwd" type="password" inputmode="numeric" placeholder="• • • • • • • •" maxlength="20" autocomplete="off">
+  <button id="unlockBtn">Unlock</button>
+  <div id="gateError">that's not quite it, try again</div>
+</div>
+
+<main id="app">
+  <div class="eyebrow">for niyu</div>
+  <div class="date" id="dateLabel"></div>
+
+  <h1>Good morning<span class="script">Niyu</span></h1>
+  <div class="divider"></div>
+
+  <div id="memoryBlock" style="display:none;">
+    <div class="memory-title" id="memoryTitle"></div>
+    <div class="photos" id="photos"></div>
+  </div>
+
+  <div class="message" id="messageText">loading this morning's note...</div>
+
+  <div class="signoff" id="signoff"></div>
+
+  <footer>made every morning, for you</footer>
+</main>
+
+<script>
+(async function(){
+  // ---------- Password gate ----------
+  const CORRECT_HASH = "f6a6ede1db281475a3d12161f3630e225fb251ae0a21453a24520c3f00cb2d85";
+
+  async function sha256(text){
+    const enc = new TextEncoder().encode(text);
+    const buf = await crypto.subtle.digest('SHA-256', enc);
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
+  const gate = document.getElementById('gate');
+  const pwdInput = document.getElementById('pwd');
+  const unlockBtn = document.getElementById('unlockBtn');
+  const gateError = document.getElementById('gateError');
+
+  async function tryUnlock(){
+    const val = pwdInput.value.trim();
+    if(!val) return;
+    const hash = await sha256(val);
+    if(hash === CORRECT_HASH){
+      gate.classList.add('hidden');
+      setTimeout(()=> gate.style.display='none', 650);
+      document.getElementById('app').classList.add('visible');
+      sessionStorage.setItem('gm_unlocked','1');
+    } else {
+      gateError.classList.add('show');
+      pwdInput.value='';
+      setTimeout(()=> gateError.classList.remove('show'), 1800);
+    }
+  }
+  unlockBtn.addEventListener('click', tryUnlock);
+  pwdInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+
+  if(sessionStorage.getItem('gm_unlocked')==='1'){
+    gate.style.display='none';
+    document.getElementById('app').classList.add('visible');
+  }
+
+  // ---------- Content loading ----------
+  function todayIST(){
+    const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'}));
+    return now;
+  }
+  function fmtDate(d){
+    return d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  }
+  function isoDate(d){
+    return d.toISOString().slice(0,10);
+  }
+  function dayOfYear(d){
+    const start = new Date(d.getFullYear(),0,0);
+    const diff = d - start;
+    return Math.floor(diff / 86400000);
+  }
+
+  const today = todayIST();
+  document.getElementById('dateLabel').textContent = fmtDate(today);
+
+  try{
+    const res = await fetch('message.json?t=' + Date.now());
+    const data = await res.json();
+
+    const messageEl = document.getElementById('messageText');
+    const memoryBlock = document.getElementById('memoryBlock');
+    const memoryTitle = document.getElementById('memoryTitle');
+    const photosEl = document.getElementById('photos');
+    const signoffEl = document.getElementById('signoff');
+
+    let entry = null;
+    if(data.today && data.today.date === isoDate(today)){
+      entry = data.today;
+    } else {
+      const fb = data.fallbacks || [];
+      if(fb.length){
+        entry = fb[dayOfYear(today) % fb.length];
+      }
+    }
+
+    if(!entry){
+      messageEl.textContent = "Good morning, Niyu. Just wanted you to see this first thing today.";
+    } else {
+      if(entry.type === 'memory' && (entry.photos||[]).length){
+        memoryBlock.style.display = 'block';
+        memoryTitle.textContent = entry.memoryTitle || '';
+        photosEl.innerHTML = '';
+        (entry.photos||[]).forEach(src=>{
+          const card = document.createElement('div');
+          card.className = 'photo-card';
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = 'a memory';
+          card.appendChild(img);
+          photosEl.appendChild(card);
+        });
+      }
+      messageEl.textContent = entry.message || '';
+      signoffEl.textContent = entry.signoff || '';
+    }
+  } catch(err){
+    document.getElementById('messageText').textContent = "Good morning, Niyu. (couldn't load today's note, but I'm thinking of you.)";
+  }
+})();
+</script>
+
+</body>
+</html>
