@@ -67,7 +67,7 @@
     background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
     color: var(--text-on-sky);
     overflow:hidden;
-    transition: background 1.5s ease, color 1.5s ease;
+    transition: background 1.8s ease, color 1.8s ease;
     padding: 40px 24px 80px;
     text-align:center;
   }
@@ -80,16 +80,25 @@
   @keyframes twinkle{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
 
   .cloud{
-    position:absolute; background: rgba(255,255,255,0.55);
-    border-radius:50%; filter: blur(8px); animation: drift linear infinite;
+    position:absolute; background: rgba(255,255,255,0.6);
+    border-radius:50%; filter: blur(9px); animation: drift linear infinite;
+    transition: opacity 1s ease;
   }
-  @keyframes drift{ from{ transform: translateX(-10vw); } to{ transform: translateX(110vw); } }
+  @keyframes drift{ from{ transform: translateX(-15vw); } to{ transform: translateX(115vw); } }
+
+  .rain{ position:absolute; inset:0; opacity:0; transition:opacity 1s ease; pointer-events:none; }
+  .drop{
+    position:absolute; width:2px; height:16px; top:-20px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.55));
+    animation: fall linear infinite;
+  }
+  @keyframes fall{ to{ transform: translateY(120vh); } }
 
   .sun{
     position:absolute; width:120px; height:120px; border-radius:50%;
     background: var(--sun-color);
     box-shadow: 0 0 60px 10px color-mix(in srgb, var(--sun-color) 55%, transparent);
-    transition: background 1.5s ease, opacity 1.5s ease, transform 2s ease;
+    transition: background 1.8s ease, opacity 1.5s ease, transform 2s ease;
     z-index:0;
   }
 
@@ -103,12 +112,13 @@
     font-family:'Caveat', cursive; font-weight:700; color:var(--gold);
     font-size:1.2em; margin-left:8px; display:inline-block;
   }
-  .date{ font-size:0.9rem; opacity:0.85; margin-bottom:22px; }
-  .day-chip{
+  .date{ font-size:0.9rem; opacity:0.85; margin-bottom:18px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:6px; }
+  .chip{
     display:inline-flex; align-items:center; gap:8px;
     background: rgba(255,255,255,0.35); backdrop-filter: blur(6px);
-    border:1px solid rgba(255,255,255,0.5); padding:8px 18px; border-radius:999px;
-    font-size:0.8rem; letter-spacing:0.5px;
+    border:1px solid rgba(255,255,255,0.5); padding:8px 16px; border-radius:999px;
+    font-size:0.78rem; letter-spacing:0.3px;
   }
   .scroll-cue{
     position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
@@ -125,8 +135,9 @@
   }
   .letter-hint{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--mauve); margin-bottom:26px; }
 
-  #envelope{ width:180px; height:130px; cursor:pointer; position:relative; margin-bottom:10px; transition: transform 0.3s ease; }
+  #envelope{ width:180px; height:130px; cursor:pointer; position:relative; margin-bottom:10px; transition: transform 0.4s ease; }
   #envelope:active{ transform: scale(0.97); }
+  #envelope.open{ transform: scale(0.92) translateY(-6px); }
   .env-body{
     position:absolute; inset:0;
     background: linear-gradient(135deg, #fff 0%, var(--blush) 140%);
@@ -149,15 +160,29 @@
   #envelope.open .env-flap{ transform: rotateX(180deg); }
   #envelope.open .env-seal{ opacity:0; }
   #envelope.open{ pointer-events:none; }
-  .tap-label{ font-size:0.78rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--ink-soft); margin-top:14px; }
+  .tap-label{
+    font-size:0.78rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--ink-soft);
+    margin-top:14px; transition: opacity 0.3s ease;
+  }
 
   .letter-paper{
-    max-width:460px; width:100%; margin-top:34px; background:#fff;
+    max-width:460px; width:100%; background:#fff;
     border-radius:14px; box-shadow: 0 20px 50px rgba(59,42,53,0.14);
-    padding: 38px 30px; opacity:0; transform: translateY(24px) scale(0.98);
-    transition: opacity 0.7s ease, transform 0.7s ease; text-align:center;
+    padding: 0 30px; text-align:center;
+    max-height:0; opacity:0; overflow:hidden;
+    transform: translateY(-30px) scale(0.8);
+    transition:
+      max-height 0.75s cubic-bezier(.16,1,.3,1),
+      padding 0.75s cubic-bezier(.16,1,.3,1),
+      opacity 0.5s ease 0.15s,
+      transform 0.65s cubic-bezier(.34,1.56,.64,1) 0.08s,
+      margin-top 0.75s cubic-bezier(.16,1,.3,1);
+    margin-top:0;
   }
-  .letter-paper.show{ opacity:1; transform: translateY(0) scale(1); }
+  .letter-paper.show{
+    max-height:1400px; opacity:1; transform: translateY(0) scale(1);
+    padding: 38px 30px; margin-top:30px;
+  }
   .memory-title{ font-family:'Caveat', cursive; font-size:1.9rem; color:var(--mauve); margin:0 0 14px; }
   .photos{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:8px 0 26px; }
   .photo-card{
@@ -171,7 +196,7 @@
   .photo-card img{ display:block; width:150px; height:180px; object-fit:cover; border-radius:2px; }
 
   .message{ font-family:'Fraunces', serif; font-weight:400; font-size:1.12rem; line-height:1.7; color:var(--ink); white-space:pre-wrap; }
-  .signoff{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--ink-soft); margin-top:22px; }
+  .signoff{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--ink-soft); margin-top:22px; margin-bottom: 4px;}
 
   #lightbox{
     position:fixed; inset:0; background:rgba(20,12,18,0.88);
@@ -205,12 +230,16 @@
 
   <section class="hero" id="hero">
     <div class="stars" id="stars"></div>
+    <div class="rain" id="rain"></div>
     <div class="sun" id="sun"></div>
     <div class="hero-content">
       <div class="eyebrow">for niyu</div>
       <h1>Good morning<span class="script">Niyu</span></h1>
       <div class="date" id="dateLabel"></div>
-      <div class="day-chip" id="dayChip"></div>
+      <div class="chips">
+        <div class="chip" id="dayChip"></div>
+        <div class="chip" id="weatherChip" style="display:none;"></div>
+      </div>
     </div>
     <div class="scroll-cue"><span></span>scroll</div>
   </section>
@@ -277,50 +306,120 @@
   function nowIST(){ return new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'})); }
   const now = nowIST();
   const hour = now.getHours() + now.getMinutes()/60;
+  const isNight = (hour < 5 || hour >= 19);
 
   const root = document.documentElement.style;
   const starsEl = document.getElementById('stars');
+  const rainEl = document.getElementById('rain');
   const sunEl = document.getElementById('sun');
   const hero = document.getElementById('hero');
 
-  function setSky(top, bottom, sun, text, showStars, sunTop){
+  function setSky(top, bottom, sun, text, showStars, sunTop, sunOpacity){
     root.setProperty('--sky-top', top);
     root.setProperty('--sky-bottom', bottom);
     root.setProperty('--sun-color', sun);
     root.setProperty('--text-on-sky', text);
     starsEl.style.opacity = showStars ? '1' : '0';
     sunEl.style.top = sunTop + '%';
-    sunEl.style.opacity = sun ? '1' : '0';
+    sunEl.style.opacity = sunOpacity;
   }
 
-  if(hour >= 5 && hour < 8){
-    setSky('#FCEEDD','#F6C9B8','#E3A64B','#3B2A35', false, 62);
-  } else if(hour >= 8 && hour < 16){
-    setSky('#DCEBF2','#FBF6F0','#F2C868','#3B2A35', false, 12);
-  } else if(hour >= 16 && hour < 19){
-    setSky('#E9D6E8','#F0B39B','#E08A5B','#3B2A35', false, 55);
-  } else {
-    setSky('#241C36','#4A314D','#F6ECE5','#F6ECE5', true, 70);
+  // base time-of-day palette
+  let base;
+  if(hour >= 5 && hour < 8) base = {top:'#FCEEDD',bottom:'#F6C9B8',sun:'#E3A64B',text:'#3B2A35',stars:false,sunTop:62,sunOp:1};
+  else if(hour >= 8 && hour < 16) base = {top:'#DCEBF2',bottom:'#FBF6F0',sun:'#F2C868',text:'#3B2A35',stars:false,sunTop:12,sunOp:1};
+  else if(hour >= 16 && hour < 19) base = {top:'#E9D6E8',bottom:'#F0B39B',sun:'#E08A5B',text:'#3B2A35',stars:false,sunTop:55,sunOp:1};
+  else base = {top:'#241C36',bottom:'#4A314D',sun:'#F6ECE5',text:'#F6ECE5',stars:true,sunTop:70,sunOp:1};
+
+  setSky(base.top, base.bottom, base.sun, base.text, base.stars, base.sunTop, base.sunOp);
+  if(base.stars){
     let starsHTML = '';
     for(let i=0;i<40;i++){
-      const top = Math.random()*70;
-      const left = Math.random()*100;
-      const delay = (Math.random()*3).toFixed(2);
+      const top = Math.random()*70, left = Math.random()*100, delay = (Math.random()*3).toFixed(2);
       starsHTML += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
     }
     starsEl.innerHTML = starsHTML;
   }
-
   sunEl.style.left = '18%';
-  if(hour >= 5 && hour < 19){
-    const cloud1 = document.createElement('div');
-    cloud1.className = 'cloud';
-    cloud1.style.cssText = 'width:140px;height:44px;top:18%;animation-duration:70s;';
-    const cloud2 = document.createElement('div');
-    cloud2.className = 'cloud';
-    cloud2.style.cssText = 'width:100px;height:32px;top:30%;animation-duration:95s;animation-delay:-30s;';
-    hero.appendChild(cloud1);
-    hero.appendChild(cloud2);
+
+  function addClouds(count, opacity){
+    for(let i=0;i<count;i++){
+      const c = document.createElement('div');
+      c.className='cloud';
+      const w = 90 + Math.random()*80, h = w*0.3;
+      const top = 10 + Math.random()*35;
+      const dur = 60 + Math.random()*50;
+      const delay = -Math.random()*40;
+      c.style.cssText = `width:${w}px;height:${h}px;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s;opacity:${opacity};`;
+      hero.appendChild(c);
+    }
+  }
+  function addRain(){
+    let dropsHTML = '';
+    for(let i=0;i<45;i++){
+      const left = Math.random()*100;
+      const dur = (0.6 + Math.random()*0.6).toFixed(2);
+      const delay = (Math.random()*2).toFixed(2);
+      dropsHTML += `<div class="drop" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;"></div>`;
+    }
+    rainEl.innerHTML = dropsHTML;
+    rainEl.style.opacity = '1';
+  }
+
+  if(!isNight) addClouds(2, 0.55);
+
+  // ---------- weather (Ambernath, Maharashtra) ----------
+  const weatherChip = document.getElementById('weatherChip');
+  const dayIdx = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
+
+  function weatherPhrase(code, tmax){
+    const hot = tmax >= 33;
+    const clearPhrases = ["clear skies today - a good one to step outside", "bright and clear out there today", "sunshine all day - enjoy it"];
+    const cloudyPhrases = ["a bit cloudy today, soft light all around", "overcast skies today, nice and mellow", "grey skies today but should stay dry"];
+    const rainPhrases = ["looks like rain today - don't forget your umbrella", "rain's likely today, carry an umbrella just in case", "expect showers today - keep that umbrella handy"];
+    const stormPhrases = ["thunderstorms expected - stay safe and dry today", "a stormy day ahead - better to stay indoors if you can"];
+    const fogPhrases = ["a foggy start to the day - take it slow if you're heading out"];
+
+    let phrase;
+    if([95,96,99].includes(code)) phrase = stormPhrases[dayIdx % stormPhrases.length];
+    else if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) phrase = rainPhrases[dayIdx % rainPhrases.length];
+    else if([45,48].includes(code)) phrase = fogPhrases[dayIdx % fogPhrases.length];
+    else if([1,2,3].includes(code)) phrase = cloudyPhrases[dayIdx % cloudyPhrases.length];
+    else phrase = clearPhrases[dayIdx % clearPhrases.length];
+
+    if(hot && ![95,96,99,51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)){
+      phrase += " - stay hydrated, Niyu";
+    }
+    return phrase;
+  }
+
+  try{
+    const wRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=19.1953&longitude=73.1936&current=weather_code,temperature_2m&daily=weather_code,temperature_2m_max&timezone=Asia%2FKolkata');
+    const wData = await wRes.json();
+    const code = wData.current?.weather_code ?? wData.daily?.weather_code?.[0] ?? 0;
+    const tmax = wData.daily?.temperature_2m_max?.[0] ?? 30;
+
+    weatherChip.textContent = '☁ ' + weatherPhrase(code, tmax);
+    weatherChip.style.display = 'inline-flex';
+
+    // adjust sky for weather, layered on top of time-of-day base
+    const rainy = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
+    const cloudy = [1,2,3,45,48].includes(code);
+
+    if(rainy){
+      if(isNight) setSky('#2B3040','#3E4658', base.sun, '#F0EEF2', true, base.sunTop, 0);
+      else setSky('#AEBAC9','#D7CFCB', base.sun, '#33303B', false, base.sunTop, 0);
+      addRain();
+    } else if(cloudy){
+      if(!isNight){
+        setSky('#CFD9E0','#F1EAE2', base.sun, base.text, false, base.sunTop, 0.55);
+        addClouds(2, 0.7);
+      } else {
+        setSky('#2E2A40','#463B4E', base.sun, base.text, true, base.sunTop, 1);
+      }
+    }
+  } catch(err){
+    weatherChip.style.display = 'none';
   }
 
   function fmtDate(d){ return d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'}); }
@@ -335,11 +434,10 @@
   envelope.addEventListener('click', ()=>{
     if(envelope.classList.contains('open')) return;
     envelope.classList.add('open');
-    tapLabel.textContent = 'opening...';
+    tapLabel.style.opacity = '0';
     setTimeout(()=>{
       letterPaper.classList.add('show');
-      tapLabel.style.opacity = '0';
-    }, 500);
+    }, 350);
   });
 
   const lightbox = document.getElementById('lightbox');
