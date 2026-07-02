@@ -590,7 +590,7 @@ function buildJar(){
   const group = new THREE.Group();
   const glassMat = new THREE.MeshPhysicalMaterial({
     color:0xffffff, transparent:true, opacity:0.28, roughness:0.05, transmission:0.85,
-    thickness:0.3, metalness:0
+    metalness:0
   });
   const jarBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.1,0.22,20), glassMat);
   jarBody.position.y=0.11;
