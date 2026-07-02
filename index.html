@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Good Morning, Niyu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +15,10 @@
     --blush:#F0C9C0;
     --mauve:#B98CA5;
     --paper:#FFFDFB;
+    --wall-1:#F7E9E2;
+    --wall-2:#F1DCD3;
+    --wood:#C89A73;
+    --wood-dark:#A97B54;
 
     --sky-top:#FCEEDD;
     --sky-mid:#F6C9B8;
@@ -29,13 +33,12 @@
     color:var(--ink);
     overflow-x:hidden;
     min-height:100dvh;
-    background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
-    transition: background 1.8s ease;
+    background: linear-gradient(180deg, var(--wall-1), var(--wall-2));
   }
 
   /* ================= PASSWORD GATE ================= */
   #gate{
-    position:fixed; inset:0; z-index:50;
+    position:fixed; inset:0; z-index:80;
     background:var(--paper);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:22px; padding:24px; text-align:center;
@@ -60,143 +63,227 @@
   #gateError{ font-size:0.85rem; color:#b5546b; height:16px; opacity:0; transition: opacity 0.2s ease; }
   #gateError.show{ opacity:1; }
 
-  #app{ opacity:0; transition: opacity 0.9s ease; position:relative; min-height:100dvh; }
+  #app{ opacity:0; transition: opacity 0.9s ease; }
   #app.visible{ opacity:1; }
 
-  /* ================= AMBIENT SKY LAYERS ================= */
-  .sky-layer{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  /* ================= ROOM ================= */
+  .room{
+    position:relative;
+    width:100%;
+    max-width:480px;
+    margin:0 auto;
+    min-height:100dvh;
+    padding: 28px 20px 100px;
+    display:flex; flex-direction:column; align-items:center;
+  }
+
+  .sign{
+    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
+    font-size:1.7rem; color:var(--ink); text-align:center; margin-bottom:4px;
+  }
+  .sign .script{ font-family:'Caveat', cursive; font-weight:700; color:var(--gold); font-size:1.25em; margin-left:6px; }
+  .sub-eyebrow{ font-size:0.65rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink-soft); opacity:0.7; margin-bottom:18px; }
+
+  /* ---- window ---- */
+  .window-wrap{
+    position:relative;
+    width:78%;
+    aspect-ratio: 4 / 5;
+    max-height:32vh;
+    margin-bottom:6px;
+  }
+  .window-frame{
+    position:absolute; inset:0;
+    background:#fff;
+    border-radius:16px 16px 6px 6px;
+    padding:8px;
+    box-shadow: 0 14px 30px rgba(59,42,53,0.16);
+  }
+  .window-sky{
+    position:relative;
+    width:100%; height:100%;
+    border-radius:10px 10px 3px 3px;
+    overflow:hidden;
+    background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bottom) 100%);
+    transition: background 1.8s ease;
+  }
+  .window-cross-v{ position:absolute; top:0; bottom:0; left:50%; width:4px; background:#fff; transform:translateX(-50%); z-index:3; }
+  .window-cross-h{ position:absolute; left:0; right:0; top:50%; height:4px; background:#fff; transform:translateY(-50%); z-index:3; }
+
   .stars{ position:absolute; inset:0; opacity:0; transition:opacity 1.5s ease; }
   .star{ position:absolute; width:2px; height:2px; background:#fff; border-radius:50%; animation: twinkle 3s ease-in-out infinite; }
   @keyframes twinkle{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
-
-  .cloud{ position:absolute; background: rgba(255,255,255,0.6); border-radius:50%; filter: blur(9px); animation: drift linear infinite; }
-  @keyframes drift{ from{ transform: translateX(-15vw); } to{ transform: translateX(115vw); } }
-
+  .cloud{ position:absolute; background: rgba(255,255,255,0.65); border-radius:50%; filter: blur(5px); animation: drift linear infinite; }
+  @keyframes drift{ from{ transform: translateX(-40px); } to{ transform: translateX(calc(100% + 40px)); } }
   .rain{ position:absolute; inset:0; opacity:0; transition:opacity 1s ease; }
-  .drop{ position:absolute; width:2px; height:16px; top:-20px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.55)); animation: fall linear infinite; }
-  @keyframes fall{ to{ transform: translateY(120vh); } }
-
+  .drop{ position:absolute; width:2px; height:10px; top:-14px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); animation: fall linear infinite; }
+  @keyframes fall{ to{ transform: translateY(140px); } }
   .sun{
-    position:absolute; width:110px; height:110px; border-radius:50%;
-    background: var(--sun-color); left:14%;
-    box-shadow: 0 0 60px 10px color-mix(in srgb, var(--sun-color) 55%, transparent);
+    position:absolute; width:34px; height:34px; border-radius:50%; left:16%;
+    background: var(--sun-color); box-shadow: 0 0 22px 6px color-mix(in srgb, var(--sun-color) 55%, transparent);
     transition: background 1.8s ease, opacity 1.5s ease, top 2s ease;
   }
 
-  .fheart{ position:absolute; bottom:-40px; opacity:0; color: var(--mauve); animation: floatUp linear infinite; }
-  @keyframes floatUp{
-    0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
-    12%{ opacity:0.3; }
-    88%{ opacity:0.22; }
-    100%{ transform: translateY(-100vh) translateX(var(--drift,20px)) rotate(20deg); opacity:0; }
+  .curtain{
+    position:absolute; top:-6px; width:26px; height:calc(100% + 12px);
+    background: linear-gradient(180deg, var(--blush), var(--mauve));
+    border-radius: 0 0 40% 40%;
+    z-index:4; opacity:0.92;
+    animation: sway 5s ease-in-out infinite;
+    box-shadow: 2px 0 6px rgba(59,42,53,0.08);
+  }
+  .curtain.left{ left:-4px; transform-origin:top left; }
+  .curtain.right{ right:-4px; transform-origin:top right; animation-delay:0.6s; }
+  @keyframes sway{ 0%,100%{ transform: rotate(-2deg); } 50%{ transform: rotate(2deg); } }
+
+  .sticky-note{
+    position:absolute; top:-14px; right:-14px;
+    width:100px;
+    background:#FFF7D6;
+    color:#4A3B1E;
+    font-size:0.62rem;
+    line-height:1.35;
+    padding:10px 9px 8px;
+    border-radius:3px;
+    box-shadow: 0 8px 16px rgba(59,42,53,0.18);
+    transform: rotate(6deg);
+    z-index:5;
+  }
+  .sticky-note::before{
+    content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:12px; height:12px; border-radius:50%;
+    background: var(--gold); box-shadow:0 2px 4px rgba(0,0,0,0.25);
   }
 
-  /* ================= PAGE CONTENT ================= */
-  .page{
-    position:relative; z-index:2;
-    min-height:100dvh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    padding: 48px 22px 40px;
-    color: var(--text-on-sky);
-    transition: color 1.8s ease;
+  /* ---- shelf ---- */
+  .shelf-wrap{ width:92%; margin-top:20px; position:relative; }
+  .shelf{
+    width:100%; height:16px;
+    background: linear-gradient(180deg, var(--wood), var(--wood-dark));
+    border-radius:4px;
+    box-shadow: 0 8px 14px rgba(59,42,53,0.18);
+  }
+  .shelf-items{
+    display:flex; align-items:flex-end; justify-content:space-around;
+    margin-bottom:-4px;
+    padding: 0 4px;
   }
 
-  .eyebrow{ font-size:0.68rem; letter-spacing:3px; text-transform:uppercase; opacity:0.75; margin-bottom:12px; }
-  h1{
-    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
-    font-size:2.3rem; line-height:1.12; margin:0 0 6px; text-align:center;
-  }
-  h1 .script{ font-family:'Caveat', cursive; font-weight:700; color:var(--gold); font-size:1.2em; margin-left:6px; display:inline-block; }
-  .date{ font-size:0.85rem; opacity:0.85; margin-bottom:14px; text-align:center; }
-  .chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:30px; }
-  .chip{
-    display:inline-flex; align-items:center; gap:6px;
-    background: rgba(255,255,255,0.4); backdrop-filter: blur(6px);
-    border:1px solid rgba(255,255,255,0.55); padding:7px 14px; border-radius:999px;
-    font-size:0.74rem; letter-spacing:0.3px;
-  }
-
-  /* ================= FLIP LOCKET ================= */
-  .flip-container{
-    perspective: 1400px;
-    width: min(320px, 84vw);
-    height: min(430px, 60vh);
-    min-height:340px;
-  }
-  .flip-card{
-    position:relative; width:100%; height:100%;
-    transform-style: preserve-3d;
-    transition: transform 1s cubic-bezier(.45,.05,.15,1);
-    cursor:pointer;
-  }
-  .flip-card.flipped{ transform: rotateY(180deg); cursor:default; }
-
-  .face{
-    position:absolute; inset:0;
-    -webkit-backface-visibility:hidden; backface-visibility:hidden;
-    border-radius:22px;
-    box-shadow: 0 24px 60px rgba(59,42,53,0.22);
-  }
-
-  .face-front{
-    background: linear-gradient(160deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255,255,255,0.7);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:18px; padding:24px; text-align:center;
-  }
-  .locket{
-    width:84px; height:84px; position:relative;
-    animation: lockPulse 2.6s ease-in-out infinite;
-  }
-  .locket svg{ width:100%; height:100%; filter: drop-shadow(0 6px 14px rgba(217,164,65,0.4)); }
-  @keyframes lockPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
-  .front-label{ font-family:'Caveat', cursive; font-size:1.5rem; color: var(--mauve); }
-  .front-sub{ font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--ink-soft); }
-
-  .face-back{
+  /* ---- frame (on wall, sits above shelf row to one side) ---- */
+  .frame-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .frame{
+    width:76px; height:96px;
     background:#fff;
-    transform: rotateY(180deg);
+    border-radius:6px;
+    padding:5px;
+    box-shadow: 0 10px 22px rgba(59,42,53,0.18);
+    transform: rotate(-3deg);
+    cursor:pointer;
+    transition: transform 0.25s ease;
+  }
+  .frame:active{ transform: rotate(-3deg) scale(0.96); }
+  .frame-inner{
+    width:100%; height:100%; border-radius:3px; overflow:hidden;
+    background: linear-gradient(160deg, var(--blush), var(--mauve));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .frame-inner img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .frame-placeholder{ width:26px; height:26px; opacity:0.8; }
+  .item-label{ font-family:'Caveat', cursive; font-size:0.95rem; color:var(--ink-soft); margin-top:8px; text-align:center; }
+
+  /* ---- mug ---- */
+  .mug-wrap{ display:flex; flex-direction:column; align-items:center; position:relative; }
+  .mug{ width:56px; height:56px; cursor:pointer; position:relative; transition: transform 0.2s ease; }
+  .mug:active{ transform: scale(0.94); }
+  .steam{ position:absolute; top:-16px; left:50%; transform:translateX(-50%); width:30px; height:20px; pointer-events:none; }
+  .steam span{
+    position:absolute; bottom:0; width:3px; height:10px; border-radius:3px;
+    background: rgba(255,255,255,0.7);
+    animation: steamRise 2.6s ease-in-out infinite;
+    opacity:0;
+  }
+  .steam span:nth-child(1){ left:4px; animation-delay:0s; }
+  .steam span:nth-child(2){ left:13px; animation-delay:0.7s; }
+  .steam span:nth-child(3){ left:22px; animation-delay:1.4s; }
+  @keyframes steamRise{
+    0%{ transform: translateY(0) scaleX(1); opacity:0; }
+    30%{ opacity:0.6; }
+    100%{ transform: translateY(-22px) scaleX(1.6); opacity:0; }
+  }
+  .day-tooltip{
+    position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(6px);
+    background: var(--ink); color:var(--paper);
+    font-size:0.68rem; letter-spacing:0.3px; white-space:nowrap;
+    padding:7px 12px; border-radius:8px;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+  .day-tooltip::after{
+    content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+    border:5px solid transparent; border-top-color: var(--ink);
+  }
+  .day-tooltip.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* ---- jar ---- */
+  .jar-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .jar{ width:58px; height:70px; cursor:pointer; transition: transform 0.15s ease; transform-origin:bottom center; }
+  .jar.shake{ animation: jarShake 0.55s ease; }
+  @keyframes jarShake{
+    0%,100%{ transform: rotate(0deg); }
+    20%{ transform: rotate(-8deg); }
+    40%{ transform: rotate(7deg); }
+    60%{ transform: rotate(-5deg); }
+    80%{ transform: rotate(3deg); }
+  }
+
+  /* ---- plant ---- */
+  .plant-wrap{ display:flex; flex-direction:column; align-items:center; }
+  .plant{ width:56px; height:64px; transition: transform 0.6s ease; }
+
+  /* ================= MODAL ================= */
+  #overlay{
+    position:fixed; inset:0; z-index:70;
+    background: rgba(30,20,26,0.55);
+    backdrop-filter: blur(2px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.35s ease;
+  }
+  #overlay.show{ opacity:1; pointer-events:auto; }
+  .modal-card{
+    background:#fff; border-radius:18px;
+    max-width:420px; width:100%;
+    max-height:82vh; overflow-y:auto;
     padding: 30px 26px;
-    overflow-y:auto;
-    display:flex; flex-direction:column;
-    -webkit-overflow-scrolling:touch;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+    text-align:center;
+    transform: scale(0.92) translateY(10px);
+    opacity:0;
+    transition: transform 0.35s cubic-bezier(.2,.9,.3,1.05), opacity 0.3s ease;
   }
-  .memory-title{ font-family:'Caveat', cursive; font-size:1.7rem; color:var(--mauve); margin:0 0 12px; text-align:center; }
-  .photos{ display:flex; gap:12px; overflow-x:auto; padding:4px 4px 14px; margin-bottom:6px; scroll-snap-type:x proximity; }
-  .photo-card{
-    flex:0 0 auto; background:#fff; padding:7px 7px 16px; border-radius:6px;
-    box-shadow: 0 8px 20px rgba(59,42,53,0.16); scroll-snap-align:center; cursor:pointer;
-    transform: rotate(var(--r,-1.5deg));
-  }
-  .photo-card:nth-child(even){ --r:1.5deg; }
-  .photo-card img{ display:block; width:130px; height:150px; object-fit:cover; border-radius:2px; }
+  #overlay.show .modal-card{ transform: scale(1) translateY(0); opacity:1; }
 
-  .message{
-    font-family:'Fraunces', serif; font-weight:400; font-size:1.05rem; line-height:1.65;
-    color:var(--ink); white-space:pre-wrap; text-align:center; margin:auto 0;
-  }
-  .signoff{ font-family:'Caveat', cursive; font-size:1.2rem; color:var(--ink-soft); margin-top:18px; text-align:center; }
-  .close-hint{
-    font-size:0.66rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft);
-    opacity:0.55; text-align:center; margin-top:14px;
+  .modal-close{
+    position:sticky; top:0; float:right; margin:-10px -10px 0 0;
+    width:30px; height:30px; border-radius:50%;
+    background:var(--paper); border:none; color:var(--ink-soft);
+    font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
   }
 
-  #lightbox{
-    position:fixed; inset:0; background:rgba(20,12,18,0.9);
-    display:none; align-items:center; justify-content:center; z-index:60; padding:20px;
+  .memory-title{ font-family:'Caveat', cursive; font-size:1.7rem; color:var(--mauve); margin:0 0 12px; clear:both; }
+  .modal-message{
+    font-family:'Fraunces', serif; font-weight:400; font-size:1.08rem; line-height:1.7;
+    color:var(--ink); white-space:pre-wrap; text-align:center; clear:both;
   }
-  #lightbox.show{ display:flex; }
-  #lightbox img{ max-width:100%; max-height:85vh; border-radius:6px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
+  .modal-signoff{ font-family:'Caveat', cursive; font-size:1.2rem; color:var(--ink-soft); margin-top:18px; }
+  .modal-photo{ width:100%; border-radius:10px; margin-bottom:16px; clear:both; }
 
   footer{
-    position:relative; z-index:2;
-    text-align:center; padding: 6px 24px 34px;
-    font-size:0.65rem; letter-spacing:1px; color: var(--text-on-sky);
+    text-align:center; padding: 18px 24px 10px;
+    font-size:0.63rem; letter-spacing:1px; color: var(--ink-soft);
     opacity:0.55; text-transform:uppercase;
   }
-
-  @media (max-width:360px){ h1{ font-size:2rem; } }
 </style>
 </head>
 <body>
@@ -209,289 +296,84 @@
 </div>
 
 <div id="app">
-  <div class="sky-layer">
-    <div class="stars" id="stars"></div>
-    <div class="rain" id="rain"></div>
-    <div class="sun" id="sun"></div>
-    <div id="hearts"></div>
-  </div>
+  <div class="room">
 
-  <div class="page">
-    <div class="eyebrow">for niyu</div>
-    <h1>Good morning<span class="script">Niyu</span></h1>
-    <div class="date" id="dateLabel"></div>
-    <div class="chips">
-      <div class="chip" id="dayChip"></div>
-      <div class="chip" id="weatherChip" style="display:none;"></div>
-    </div>
+    <div class="sign">Good morning<span class="script">Niyu</span></div>
+    <div class="sub-eyebrow" id="dateLabel"></div>
 
-    <div class="flip-container">
-      <div class="flip-card" id="flipCard">
-        <div class="face face-front">
-          <div class="locket">
-            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="var(--gold)"/>
-            </svg>
-          </div>
-          <div class="front-label">you've got something today</div>
-          <div class="front-sub">tap to open</div>
-        </div>
-        <div class="face face-back">
-          <div id="memoryBlock" style="display:none;">
-            <div class="memory-title" id="memoryTitle"></div>
-            <div class="photos" id="photos"></div>
-          </div>
-          <div class="message" id="messageText">loading...</div>
-          <div class="signoff" id="signoff"></div>
-          <div class="close-hint">tap to close</div>
+    <div class="window-wrap">
+      <div class="curtain left"></div>
+      <div class="curtain right"></div>
+      <div class="window-frame">
+        <div class="window-sky" id="windowSky">
+          <div class="stars" id="stars"></div>
+          <div class="rain" id="rain"></div>
+          <div class="sun" id="sun"></div>
+          <div class="window-cross-v"></div>
+          <div class="window-cross-h"></div>
         </div>
       </div>
+      <div class="sticky-note" id="weatherNote">loading weather...</div>
     </div>
+
+    <div class="shelf-wrap">
+      <div class="shelf-items">
+
+        <div class="frame-wrap">
+          <div class="frame" id="frameBtn">
+            <div class="frame-inner" id="frameInner">
+              <svg class="frame-placeholder" viewBox="0 0 32 32" fill="none"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="#fff" fill-opacity="0.85"/></svg>
+            </div>
+          </div>
+          <div class="item-label">us</div>
+        </div>
+
+        <div class="mug-wrap">
+          <div class="mug" id="mugBtn">
+            <div class="day-tooltip" id="dayTooltip"></div>
+            <div class="steam" id="steam"><span></span><span></span><span></span></div>
+            <svg viewBox="0 0 60 60" width="56" height="56">
+              <path d="M42 24 Q54 24 54 34 Q54 44 42 44" stroke="#fff" stroke-width="4" fill="none"/>
+              <rect x="10" y="22" width="32" height="24" rx="5" fill="#fff"/>
+              <path d="M10 26 h32 v6 a16 16 0 0 1 -32 0 z" fill="var(--mauve)"/>
+            </svg>
+          </div>
+          <div class="item-label">morning brew</div>
+        </div>
+
+        <div class="jar-wrap">
+          <div class="jar" id="jarBtn">
+            <svg viewBox="0 0 60 70" width="58" height="68">
+              <rect x="16" y="8" width="28" height="10" rx="3" fill="var(--gold)"/>
+              <rect x="12" y="18" width="36" height="46" rx="10" fill="#ffffff" fill-opacity="0.9" stroke="var(--mauve)" stroke-width="2"/>
+              <rect x="21" y="30" width="18" height="5" rx="2.5" fill="var(--blush)"/>
+              <rect x="21" y="40" width="18" height="5" rx="2.5" fill="var(--blush)" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="item-label" id="jarLabel">shake for your<br>morning note</div>
+        </div>
+
+        <div class="plant-wrap">
+          <div class="plant" id="plantSvg"></div>
+          <div class="item-label">growing<br>with us</div>
+        </div>
+
+      </div>
+      <div class="shelf"></div>
+    </div>
+
   </div>
 
   <footer>made every morning, for you</footer>
 </div>
 
-<div id="lightbox"><img id="lightboxImg" src="" alt=""></div>
+<div id="overlay">
+  <div class="modal-card" id="modalCard"></div>
+</div>
 
 <script>
-(async function(){
-  const CORRECT_HASH = "f6a6ede1db281475a3d12161f3630e225fb251ae0a21453a24520c3f00cb2d85";
-  async function sha256(text){
-    const enc = new TextEncoder().encode(text);
-    const buf = await crypto.subtle.digest('SHA-256', enc);
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-  const gate = document.getElementById('gate');
-  const pwdInput = document.getElementById('pwd');
-  const unlockBtn = document.getElementById('unlockBtn');
-  const gateError = document.getElementById('gateError');
-
-  async function tryUnlock(){
-    const val = pwdInput.value.trim();
-    if(!val) return;
-    const hash = await sha256(val);
-    if(hash === CORRECT_HASH){
-      gate.classList.add('hidden');
-      setTimeout(()=> gate.style.display='none', 650);
-      document.getElementById('app').classList.add('visible');
-      sessionStorage.setItem('gm_unlocked','1');
-    } else {
-      gateError.classList.add('show');
-      pwdInput.value='';
-      setTimeout(()=> gateError.classList.remove('show'), 1800);
-    }
-  }
-  unlockBtn.addEventListener('click', tryUnlock);
-  pwdInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
-  if(sessionStorage.getItem('gm_unlocked')==='1'){
-    gate.style.display='none';
-    document.getElementById('app').classList.add('visible');
-  }
-
-  function nowIST(){ return new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'})); }
-  const now = nowIST();
-  const hour = now.getHours() + now.getMinutes()/60;
-  const isNight = (hour < 5 || hour >= 19);
-
-  const body = document.body;
-  const starsEl = document.getElementById('stars');
-  const rainEl = document.getElementById('rain');
-  const sunEl = document.getElementById('sun');
-  const heartsEl = document.getElementById('hearts');
-
-  function setSky(top, mid, bottom, sun, text, showStars, sunTop, sunOpacity){
-    document.documentElement.style.setProperty('--sky-top', top);
-    document.documentElement.style.setProperty('--sky-mid', mid);
-    document.documentElement.style.setProperty('--sky-bottom', bottom);
-    document.documentElement.style.setProperty('--sun-color', sun);
-    document.documentElement.style.setProperty('--text-on-sky', text);
-    starsEl.style.opacity = showStars ? '1' : '0';
-    sunEl.style.top = sunTop + '%';
-    sunEl.style.opacity = sunOpacity;
-  }
-
-  let base;
-  if(hour >= 5 && hour < 8) base = {top:'#FCEEDD',mid:'#F6C9B8',bottom:'#F3E4DC',sun:'#E3A64B',text:'#3B2A35',stars:false,sunTop:58,sunOp:1};
-  else if(hour >= 8 && hour < 16) base = {top:'#DCEBF2',mid:'#EAF1EE',bottom:'#FBF6F0',sun:'#F2C868',text:'#3B2A35',stars:false,sunTop:10,sunOp:1};
-  else if(hour >= 16 && hour < 19) base = {top:'#E9D6E8',mid:'#F0B39B',bottom:'#F6E1D3',sun:'#E08A5B',text:'#3B2A35',stars:false,sunTop:50,sunOp:1};
-  else base = {top:'#1D1730',mid:'#332944',bottom:'#4A314D',sun:'#F6ECE5',text:'#F6ECE5',stars:true,sunTop:64,sunOp:1};
-
-  setSky(base.top, base.mid, base.bottom, base.sun, base.text, base.stars, base.sunTop, base.sunOp);
-  if(base.stars){
-    let html = '';
-    for(let i=0;i<45;i++){
-      const top = Math.random()*65, left = Math.random()*100, delay = (Math.random()*3).toFixed(2);
-      html += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
-    }
-    starsEl.innerHTML = html;
-  }
-
-  function addClouds(count, opacity){
-    for(let i=0;i<count;i++){
-      const c = document.createElement('div');
-      c.className='cloud';
-      const w = 90 + Math.random()*90, h = w*0.3;
-      const top = 8 + Math.random()*30;
-      const dur = 70 + Math.random()*50;
-      const delay = -Math.random()*40;
-      c.style.cssText = `width:${w}px;height:${h}px;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s;opacity:${opacity};`;
-      document.querySelector('.sky-layer').appendChild(c);
-    }
-  }
-  function addRain(){
-    let html = '';
-    for(let i=0;i<50;i++){
-      const left = Math.random()*100;
-      const dur = (0.6 + Math.random()*0.6).toFixed(2);
-      const delay = (Math.random()*2).toFixed(2);
-      html += `<div class="drop" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;"></div>`;
-    }
-    rainEl.innerHTML = html;
-    rainEl.style.opacity = '1';
-  }
-  function scatterHearts(count){
-    let html = '';
-    for(let i=0;i<count;i++){
-      const left = Math.random()*100;
-      const size = 10 + Math.random()*14;
-      const dur = 16 + Math.random()*14;
-      const delay = -Math.random()*24;
-      const drift = (Math.random()*60-30).toFixed(0)+'px';
-      html += `<div class="fheart" style="left:${left}%; --drift:${drift}; animation-duration:${dur}s; animation-delay:${delay}s;">
-        <svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="currentColor"/></svg>
-      </div>`;
-    }
-    heartsEl.innerHTML = html;
-  }
-
-  if(!isNight) addClouds(3, 0.55);
-  scatterHearts(7);
-
-  // ---------- weather (Ambernath, Maharashtra) ----------
-  const weatherChip = document.getElementById('weatherChip');
-  const dayIdx = Math.floor((now - new Date(now.getFullYear(),0,0)) / 86400000);
-
-  function weatherPhrase(code, tmax){
-    const hot = tmax >= 33;
-    const isRainy = [51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code);
-    const isStorm = [95,96,99].includes(code);
-    const isFog = [45,48].includes(code);
-    const isCloudy = [1,2,3].includes(code);
-
-    const clearPhrases = ["Clear skies today - enjoy the sunshine! ♥️☀️", "Bright and clear today! ♥️☀️", "Sunny all day today! ♥️☀️"];
-    const cloudyPhrases = ["Cloudy skies today - nice and mellow! ♥️☁️", "Overcast today, stays cool at least! ♥️☁️", "Grey skies today but should stay dry! ♥️☁️"];
-    const rainPhrases = ["It's a rainy day - carry your umbrella with you! ♥️☔", "Showers expected today - umbrella, don't forget! ♥️☔", "Rain's likely today - keep that umbrella handy! ♥️☔"];
-    const stormPhrases = ["Thunderstorms today - stay safe and dry! ♥️⛈️", "Stormy today - better to stay indoors if you can! ♥️⛈️"];
-    const fogPhrases = ["Foggy start today - take it slow out there! ♥️🌫️"];
-    const hotPhrases = ["It'll be quite hot today, Niyu - please don't skip water just because you're busy! ♥️🥵"];
-
-    let phrase;
-    if(isStorm) phrase = stormPhrases[dayIdx % stormPhrases.length];
-    else if(isRainy) phrase = rainPhrases[dayIdx % rainPhrases.length];
-    else if(isFog) phrase = fogPhrases[dayIdx % fogPhrases.length];
-    else if(hot) phrase = hotPhrases[dayIdx % hotPhrases.length];
-    else if(isCloudy) phrase = cloudyPhrases[dayIdx % cloudyPhrases.length];
-    else phrase = clearPhrases[dayIdx % clearPhrases.length];
-
-    return "Niyu Weather Update: " + phrase;
-  }
-
-  try{
-    const wRes = await fetch('https://api.open-meteo.com/v1/forecast?latitude=19.1953&longitude=73.1936&current=weather_code,temperature_2m&daily=weather_code,temperature_2m_max&timezone=Asia%2FKolkata');
-    const wData = await wRes.json();
-    const code = wData.current?.weather_code ?? wData.daily?.weather_code?.[0] ?? 0;
-    const tmax = wData.daily?.temperature_2m_max?.[0] ?? 30;
-
-    weatherChip.textContent = weatherPhrase(code, tmax);
-    weatherChip.style.display = 'inline-flex';
-
-    const rainy = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
-    const cloudy = [1,2,3,45,48].includes(code);
-
-    if(rainy){
-      if(isNight) setSky('#232840','#2E3450','#3E4658', base.sun, '#F0EEF2', true, base.sunTop, 0);
-      else setSky('#A8B5C6','#C7C4CB','#DAD1CC', base.sun, '#33303B', false, base.sunTop, 0);
-      addRain();
-    } else if(cloudy){
-      if(!isNight){
-        setSky('#CFD9E0','#E4DDD6','#F1EAE2', base.sun, base.text, false, base.sunTop, 0.55);
-        addClouds(2, 0.7);
-      } else {
-        setSky('#241F38','#3A2E44','#463B4E', base.sun, base.text, true, base.sunTop, 1);
-      }
-    }
-  } catch(err){
-    weatherChip.style.display = 'none';
-  }
-
-  function fmtDate(d){ return d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'}); }
-  function isoDate(d){ return d.toISOString().slice(0,10); }
-  function dayOfYear(d){ const start = new Date(d.getFullYear(),0,0); return Math.floor((d - start) / 86400000); }
-
-  document.getElementById('dateLabel').textContent = fmtDate(now);
-
-  // ---------- flip card ----------
-  const flipCard = document.getElementById('flipCard');
-  flipCard.addEventListener('click', ()=>{
-    flipCard.classList.toggle('flipped');
-  });
-
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  lightbox.addEventListener('click', ()=> lightbox.classList.remove('show'));
-
-  try{
-    const res = await fetch('message.json?t=' + Date.now());
-    const data = await res.json();
-
-    document.getElementById('dayChip').textContent =
-      data.startDate ? ('day ' + (Math.floor((now - new Date(data.startDate)) / 86400000) + 1) + ' of good mornings') : '';
-
-    const messageEl = document.getElementById('messageText');
-    const memoryBlock = document.getElementById('memoryBlock');
-    const memoryTitle = document.getElementById('memoryTitle');
-    const photosEl = document.getElementById('photos');
-    const signoffEl = document.getElementById('signoff');
-
-    let entry = null;
-    if(data.today && data.today.date === isoDate(now)){
-      entry = data.today;
-    } else {
-      const fb = data.fallbacks || [];
-      if(fb.length) entry = fb[dayOfYear(now) % fb.length];
-    }
-
-    if(!entry){
-      messageEl.textContent = "Good morning, Niyu. Just wanted you to see this first thing today.";
-    } else {
-      if(entry.type === 'memory' && (entry.photos||[]).length){
-        memoryBlock.style.display = 'block';
-        memoryTitle.textContent = entry.memoryTitle || '';
-        photosEl.innerHTML = '';
-        (entry.photos||[]).forEach(src=>{
-          const card = document.createElement('div');
-          card.className = 'photo-card';
-          const img = document.createElement('img');
-          img.src = src;
-          img.alt = 'a memory';
-          img.addEventListener('click', (e)=>{
-            e.stopPropagation();
-            lightboxImg.src = src;
-            lightbox.classList.add('show');
-          });
-          card.appendChild(img);
-          photosEl.appendChild(card);
-        });
-      }
-      messageEl.textContent = entry.message || '';
-      signoffEl.textContent = entry.signoff || '';
-    }
-  } catch(err){
-    document.getElementById('messageText').textContent = "Good morning, Niyu. (couldn't load today's note, but I'm thinking of you.)";
-  }
-})();
+window.SITE_DATA_URL = 'message.json';
 </script>
-
+<script src="app.js"></script>
 </body>
 </html>
