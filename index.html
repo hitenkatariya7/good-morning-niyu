@@ -374,21 +374,27 @@
 
   function weatherPhrase(code, tmax){
     const hot = tmax >= 33;
-    const clearPhrases = ["clear skies today", "bright and clear out there", "sunshine all day today"];
-    const cloudyPhrases = ["a bit cloudy today", "overcast skies, nice and mellow", "grey skies but should stay dry"];
-    const rainPhrases = ["rain likely - carry an umbrella", "showers expected, keep an umbrella handy", "looks like a wet one, don't forget your umbrella"];
-    const stormPhrases = ["thunderstorms expected - stay safe today", "a stormy day ahead, better to stay indoors"];
-    const fogPhrases = ["foggy start today - take it slow"];
+    const isRainy = [51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code);
+    const isStorm = [95,96,99].includes(code);
+    const isFog = [45,48].includes(code);
+    const isCloudy = [1,2,3].includes(code);
+
+    const clearPhrases = ["Clear skies today - enjoy the sunshine! ♥️☀️", "Bright and clear today! ♥️☀️", "Sunny all day today! ♥️☀️"];
+    const cloudyPhrases = ["Cloudy skies today - nice and mellow! ♥️☁️", "Overcast today, stays cool at least! ♥️☁️", "Grey skies today but should stay dry! ♥️☁️"];
+    const rainPhrases = ["It's a rainy day - carry your umbrella with you! ♥️☔", "Showers expected today - umbrella, don't forget! ♥️☔", "Rain's likely today - keep that umbrella handy! ♥️☔"];
+    const stormPhrases = ["Thunderstorms today - stay safe and dry! ♥️⛈️", "Stormy today - better to stay indoors if you can! ♥️⛈️"];
+    const fogPhrases = ["Foggy start today - take it slow out there! ♥️🌫️"];
+    const hotPhrases = ["It'll be quite hot today, Niyu - please don't skip water just because you're busy! ♥️🥵"];
 
     let phrase;
-    if([95,96,99].includes(code)) phrase = stormPhrases[dayIdx % stormPhrases.length];
-    else if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) phrase = rainPhrases[dayIdx % rainPhrases.length];
-    else if([45,48].includes(code)) phrase = fogPhrases[dayIdx % fogPhrases.length];
-    else if([1,2,3].includes(code)) phrase = cloudyPhrases[dayIdx % cloudyPhrases.length];
+    if(isStorm) phrase = stormPhrases[dayIdx % stormPhrases.length];
+    else if(isRainy) phrase = rainPhrases[dayIdx % rainPhrases.length];
+    else if(isFog) phrase = fogPhrases[dayIdx % fogPhrases.length];
+    else if(hot) phrase = hotPhrases[dayIdx % hotPhrases.length];
+    else if(isCloudy) phrase = cloudyPhrases[dayIdx % cloudyPhrases.length];
     else phrase = clearPhrases[dayIdx % clearPhrases.length];
 
-    if(hot && ![95,96,99,51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) phrase += " - stay hydrated";
-    return phrase;
+    return "Niyu Weather Update: " + phrase;
   }
 
   try{
@@ -397,7 +403,7 @@
     const code = wData.current?.weather_code ?? wData.daily?.weather_code?.[0] ?? 0;
     const tmax = wData.daily?.temperature_2m_max?.[0] ?? 30;
 
-    weatherChip.textContent = '☁ ' + weatherPhrase(code, tmax);
+    weatherChip.textContent = weatherPhrase(code, tmax);
     weatherChip.style.display = 'inline-flex';
 
     const rainy = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
