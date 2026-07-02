@@ -189,8 +189,8 @@ let raycaster, pointer;
 let interactables = {};
 let cameraState = { mode:"intro", t:0, target:new THREE.Vector3(), from:null, to:null,
                      lookFrom:null, lookTo:null, dur:1, focusKey:null };
-let idleTarget = new THREE.Vector3(0,1.35,-1.1);
-let idleBase = new THREE.Vector3(0,1.62,4.4);
+let idleTarget = new THREE.Vector3(0.1,1.15,-1.0);
+let idleBase = new THREE.Vector3(0,1.95,5.9);
 let drag = { active:false, sx:0, sy:0, yaw:0, pitch:0, curYaw:0, curPitch:0 };
 let weatherCat = "cloudy", isDay = true;
 let rainDrops = [], stars = [], sunMoon;
@@ -249,9 +249,9 @@ function initThree(){
   scene.background = new THREE.Color(0x0c0e14);
   scene.fog = new THREE.Fog(0x1b1712, 8, 22);
 
-  camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 100);
-  camera.position.set(0, 3.4, 16);
-  camera.lookAt(0,1.4,-2);
+  camera = new THREE.PerspectiveCamera(computeFov(), innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0, 4.6, 14);
+  camera.lookAt(0,1.6,-1.5);
 
   renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, powerPreference:"high-performance" });
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
@@ -287,20 +287,28 @@ function initThree(){
   // begin cinematic intro
   cameraState.mode = "intro";
   cameraState.t = 0;
-  cameraState.dur = 4.2;
+  cameraState.dur = 5.0;
   cameraState.from = camera.position.clone();
   cameraState.to = idleBase.clone();
-  cameraState.lookFrom = new THREE.Vector3(0,1.6,-2);
+  cameraState.lookFrom = new THREE.Vector3(0,1.6,-1.8);
   cameraState.lookTo = idleTarget.clone();
 
-  setTimeout(()=>{ document.getElementById('hud').classList.add('show'); }, 3600);
-  setTimeout(()=>{ positionStickyNote(); document.getElementById('stickyNote').classList.add('show'); }, 4400);
+  setTimeout(()=>{ document.getElementById('hud').classList.add('show'); }, 4200);
+  setTimeout(()=>{ positionStickyNote(); document.getElementById('stickyNote').classList.add('show'); }, 5100);
 
   tickClock();
   setInterval(tickClock, 1000*20);
 }
 
+function computeFov(){
+  const BASE_FOV = 45; // comfortable vertical FOV on wide/desktop screens
+  const aspect = innerWidth/innerHeight;
+  if(aspect >= 1) return BASE_FOV;
+  // portrait phones: widen vertical FOV so the horizontal frustum still shows the room
+  return THREE.MathUtils.clamp(BASE_FOV/aspect, BASE_FOV, 78);
+}
 function onResize(){
+  camera.fov = computeFov();
   camera.aspect = innerWidth/innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth, innerHeight);
@@ -380,7 +388,7 @@ function buildRoom(){
     new THREE.CircleGeometry(1.7, 40),
     new THREE.MeshStandardMaterial({color:0xC98B62, roughness:0.95})
   );
-  rug.rotation.x = -Math.PI/2; rug.position.set(0.6,0.01,0.4);
+  rug.rotation.x = -Math.PI/2; rug.position.set(0.1,0.01,0.4);
   rug.receiveShadow = true;
   scene.add(rug);
 
@@ -509,36 +517,36 @@ function buildFurniture(){
   // sofa
   const sofaMat = new THREE.MeshStandardMaterial({color:0x6B7A5E, roughness:0.9});
   const sofaBase = roundedBox(1.9,0.5,0.85,0x6B7A5E,0.9);
-  sofaBase.position.set(1.3,0.28,0.9); sofaBase.material=sofaMat; scene.add(sofaBase);
+  sofaBase.position.set(0.6,0.28,0.9); sofaBase.material=sofaMat; scene.add(sofaBase);
   const sofaBack = roundedBox(1.9,0.6,0.2,0x6B7A5E,0.9);
-  sofaBack.position.set(1.3,0.62,1.3); sofaBack.material=sofaMat; scene.add(sofaBack);
-  [0.5,2.1].forEach(x=>{
+  sofaBack.position.set(0.6,0.62,1.3); sofaBack.material=sofaMat; scene.add(sofaBack);
+  [-0.2,1.4].forEach(x=>{
     const arm = roundedBox(0.22,0.55,0.9,0x5c6b50,0.9);
     arm.position.set(x,0.5,0.9); scene.add(arm);
   });
   const cushionColors=[0xD9A441,0x8B5E3C,0xE7C7B8];
   for(let i=0;i<3;i++){
     const cushion = roundedBox(0.58,0.16,0.7,cushionColors[i],0.85);
-    cushion.position.set(0.5+i*0.63,0.56,0.9);
+    cushion.position.set(-0.2+i*0.63,0.56,0.9);
     scene.add(cushion);
   }
 
   // coffee table
   const tableTop = roundedBox(0.85,0.06,0.5,0x5f3d24,0.5);
-  tableTop.position.set(0.9,0.42,-0.15); scene.add(tableTop);
+  tableTop.position.set(0.2,0.42,-0.15); scene.add(tableTop);
   [[-0.35,-0.2],[0.35,-0.2],[-0.35,0.2],[0.35,0.2]].forEach(([dx,dz])=>{
     const leg = roundedBox(0.05,0.4,0.05,0x3a2417,0.6);
-    leg.position.set(0.9+dx,0.2,-0.15+dz); scene.add(leg);
+    leg.position.set(0.2+dx,0.2,-0.15+dz); scene.add(leg);
   });
 
   // bookshelf
   const shelfMat = new THREE.MeshStandardMaterial({map: woodTexture('#6b4429','#4a2e1a'), roughness:0.8});
   const shelfUnit = roundedBox(1.1,1.9,0.32,0x6b4429,0.8);
   shelfUnit.material = shelfMat;
-  shelfUnit.position.set(-3.2,0.95,-2.4); scene.add(shelfUnit);
+  shelfUnit.position.set(-1.7,0.95,-2.4); scene.add(shelfUnit);
   const bookColors=[0xA75E3C,0x6B7A5E,0xD9A441,0x2B3A55,0x8B5E3C,0xC98B62];
   for(let row=0;row<3;row++){
-    let x=-3.55;
+    let x=-2.05;
     for(let i=0;i<5;i++){
       const bw = 0.05+Math.random()*0.04;
       const bh = 0.28+Math.random()*0.08;
@@ -551,17 +559,17 @@ function buildFurniture(){
 
   // side table + lamp base
   const sideTop = roundedBox(0.4,0.05,0.4,0x5f3d24,0.5);
-  sideTop.position.set(2.15,0.5,0.85); scene.add(sideTop);
+  sideTop.position.set(1.45,0.5,0.85); scene.add(sideTop);
   const sideLeg = roundedBox(0.06,0.5,0.06,0x3a2417,0.6);
-  sideLeg.position.set(2.15,0.25,0.85); scene.add(sideLeg);
+  sideLeg.position.set(1.45,0.25,0.85); scene.add(sideLeg);
 
   const lampBase = roundedBox(0.08,0.25,0.08,0x2b2118,0.5,0.3);
-  lampBase.position.set(2.15,0.65,0.85); scene.add(lampBase);
+  lampBase.position.set(1.45,0.65,0.85); scene.add(lampBase);
   const lampShade = new THREE.Mesh(
     new THREE.ConeGeometry(0.18,0.22,16,1,true),
     new THREE.MeshStandardMaterial({color:0xF3D9A8, roughness:0.6, emissive:0xF3D9A8, emissiveIntensity:0, side:THREE.DoubleSide})
   );
-  lampShade.position.set(2.15,0.95,0.85);
+  lampShade.position.set(1.45,0.95,0.85);
   scene.add(lampShade);
   window._lampShade = lampShade;
 
@@ -600,12 +608,12 @@ function buildJar(){
     note.rotation.y = Math.random()*Math.PI;
     group.add(note);
   }
-  group.position.set(0.75,0.45,-0.05);
+  group.position.set(0.05,0.45,-0.05);
   scene.add(group);
   group.userData.baseY = group.position.y;
   group.userData.baseRotZ = 0;
   interactables.jar = { group, hit: jarBody, focus:{
-    pos:new THREE.Vector3(0.15,0.62,0.55), look:new THREE.Vector3(0.75,0.55,-0.05)
+    pos:new THREE.Vector3(-0.55,0.62,0.55), look:new THREE.Vector3(0.05,0.55,-0.05)
   }};
 }
 
@@ -629,12 +637,12 @@ function buildFrame(){
   glass.position.z = 0.023;
   group.add(glass);
 
-  group.position.set(-1.55,1.95,-2.9);
+  group.position.set(-0.05,1.95,-2.9);
   group.rotation.y = 0.03;
   scene.add(group);
 
   interactables.frame = { group, hit: outer, baseZ:group.position.z, focus:{
-    pos:new THREE.Vector3(-1.15,1.95,-1.4), look:new THREE.Vector3(-1.55,1.95,-2.9)
+    pos:new THREE.Vector3(0.35,1.95,-1.4), look:new THREE.Vector3(-0.05,1.95,-2.9)
   }};
 }
 
@@ -660,10 +668,10 @@ function buildMug(){
   group.add(steam);
   mugSteam = { points:steam, geo:steamGeo };
 
-  group.position.set(0.65,0.455,-0.05);
+  group.position.set(-0.05,0.455,-0.05);
   scene.add(group);
   interactables.mug = { group, hit: body, focus:{
-    pos:new THREE.Vector3(0.35,0.62,0.35), look:new THREE.Vector3(0.65,0.5,-0.05)
+    pos:new THREE.Vector3(-0.35,0.62,0.35), look:new THREE.Vector3(-0.05,0.5,-0.05)
   }};
 }
 
@@ -714,7 +722,7 @@ function buildPlant(){
     }
   }
 
-  plantGroup.position.set(1.65,0,-2.6);
+  plantGroup.position.set(0.95,0,-2.6);
   scene.add(plantGroup);
 }
 
@@ -735,7 +743,7 @@ function buildClockObject(){
   clockMinHand.geometry.translate(0,0.05,0);
   group.add(clockMinHand);
 
-  group.position.set(-2.3,2.8,-2.95);
+  group.position.set(-0.8,2.8,-2.95);
   scene.add(group);
 }
 
