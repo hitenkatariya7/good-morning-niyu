@@ -6,223 +6,193 @@
 <title>Good Morning, Niyu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600;700&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#FBF5F1;
-    --paper-warm:#F6ECE5;
     --ink:#3B2A35;
     --ink-soft:#6E5A66;
     --gold:#D9A441;
     --blush:#F0C9C0;
     --mauve:#B98CA5;
+    --paper:#FBF5F1;
+
+    --sky-top:#FCEEDD;
+    --sky-bottom:#F6C9B8;
+    --sun-color:#E3A64B;
+    --text-on-sky:#3B2A35;
   }
-  *{box-sizing:border-box;}
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
   html,body{margin:0;padding:0;}
   body{
-    min-height:100vh;
-    background:var(--paper);
     font-family:'Work Sans', sans-serif;
     color:var(--ink);
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    background:var(--paper);
     overflow-x:hidden;
   }
 
-  /* ---------- Sunrise ambient glow ---------- */
-  .sunrise{
-    position:fixed;
-    inset:0;
-    z-index:0;
-    background:
-      radial-gradient(ellipse 60% 40% at 50% 100%, rgba(217,164,65,0.35), transparent 70%),
-      radial-gradient(ellipse 50% 35% at 50% 105%, rgba(240,201,192,0.5), transparent 70%);
-    animation: rise 3.5s ease-out forwards;
-    pointer-events:none;
-  }
-  @keyframes rise{
-    0%{ opacity:0; transform: translateY(6%); }
-    100%{ opacity:1; transform: translateY(0%); }
-  }
-  @media (prefers-reduced-motion: reduce){
-    .sunrise{ animation:none; opacity:1; }
-  }
-
-  /* ---------- Password gate ---------- */
   #gate{
-    position:fixed; inset:0; z-index:10;
+    position:fixed; inset:0; z-index:50;
     background:var(--paper);
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     gap:22px; padding:24px; text-align:center;
     transition: opacity 0.6s ease;
   }
   #gate.hidden{ opacity:0; pointer-events:none; }
-  .gate-label{
-    font-family:'Caveat', cursive;
-    font-size:1.6rem;
-    color:var(--mauve);
-  }
+  .gate-label{ font-family:'Caveat', cursive; font-size:1.6rem; color:var(--mauve); }
   #pwd{
-    font-family:'Work Sans', sans-serif;
-    font-size:1.1rem;
-    padding:14px 18px;
-    border-radius:14px;
-    border:1.5px solid var(--blush);
-    background:#fff;
-    color:var(--ink);
-    width:220px;
-    text-align:center;
-    outline:none;
-    letter-spacing:2px;
+    font-family:'Work Sans', sans-serif; font-size:1.1rem;
+    padding:14px 18px; border-radius:14px; border:1.5px solid var(--blush);
+    background:#fff; color:var(--ink); width:220px; text-align:center;
+    outline:none; letter-spacing:2px;
   }
   #pwd:focus{ border-color:var(--gold); }
   #unlockBtn{
-    font-family:'Work Sans', sans-serif;
-    font-size:0.95rem;
-    letter-spacing:0.5px;
-    padding:12px 28px;
-    border-radius:999px;
-    border:none;
-    background:var(--ink);
-    color:var(--paper);
-    cursor:pointer;
-    transition: transform 0.2s ease, background 0.2s ease;
+    font-family:'Work Sans', sans-serif; font-size:0.95rem; letter-spacing:0.5px;
+    padding:12px 28px; border-radius:999px; border:none;
+    background:var(--ink); color:var(--paper); cursor:pointer;
+    transition: transform 0.2s ease;
   }
   #unlockBtn:active{ transform:scale(0.97); }
-  #gateError{
-    font-size:0.85rem;
-    color:#b5546b;
-    height:16px;
-    opacity:0;
-    transition: opacity 0.2s ease;
-  }
+  #gateError{ font-size:0.85rem; color:#b5546b; height:16px; opacity:0; transition: opacity 0.2s ease; }
   #gateError.show{ opacity:1; }
 
-  /* ---------- Main card ---------- */
-  #app{
-    position:relative;
-    z-index:1;
-    width:100%;
-    max-width:460px;
-    margin:0 auto;
-    padding:48px 28px 60px;
-    opacity:0;
-    transition: opacity 0.8s ease;
-  }
+  #app{ opacity:0; transition: opacity 0.9s ease; }
   #app.visible{ opacity:1; }
 
-  .eyebrow{
-    font-family:'Work Sans', sans-serif;
-    font-size:0.7rem;
-    letter-spacing:2.5px;
-    text-transform:uppercase;
-    color:var(--ink-soft);
+  .hero{
+    position:relative;
+    min-height:100svh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+    color: var(--text-on-sky);
+    overflow:hidden;
+    transition: background 1.5s ease, color 1.5s ease;
+    padding: 40px 24px 80px;
     text-align:center;
-    margin-bottom:10px;
-  }
-  .date{
-    font-family:'Work Sans', sans-serif;
-    font-size:0.85rem;
-    color:var(--mauve);
-    text-align:center;
-    margin-bottom:28px;
   }
 
+  .stars{ position:absolute; inset:0; opacity:0; transition:opacity 1.5s ease; pointer-events:none; }
+  .star{
+    position:absolute; width:2px; height:2px; background:#fff; border-radius:50%;
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
+
+  .cloud{
+    position:absolute; background: rgba(255,255,255,0.55);
+    border-radius:50%; filter: blur(8px); animation: drift linear infinite;
+  }
+  @keyframes drift{ from{ transform: translateX(-10vw); } to{ transform: translateX(110vw); } }
+
+  .sun{
+    position:absolute; width:120px; height:120px; border-radius:50%;
+    background: var(--sun-color);
+    box-shadow: 0 0 60px 10px color-mix(in srgb, var(--sun-color) 55%, transparent);
+    transition: background 1.5s ease, opacity 1.5s ease, transform 2s ease;
+    z-index:0;
+  }
+
+  .hero-content{ position:relative; z-index:2; }
+  .eyebrow{ font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; opacity:0.75; margin-bottom:14px; }
   h1{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-optical-sizing:auto;
-    font-size:2.6rem;
-    line-height:1.15;
-    text-align:center;
-    margin:0 0 6px;
-    color:var(--ink);
+    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
+    font-size:2.7rem; line-height:1.12; margin:0 0 8px;
   }
   h1 .script{
-    font-family:'Caveat', cursive;
-    font-weight:600;
-    color:var(--gold);
-    font-size:1.15em;
-    margin-left:8px;
+    font-family:'Caveat', cursive; font-weight:700; color:var(--gold);
+    font-size:1.2em; margin-left:8px; display:inline-block;
   }
+  .date{ font-size:0.9rem; opacity:0.85; margin-bottom:22px; }
+  .day-chip{
+    display:inline-flex; align-items:center; gap:8px;
+    background: rgba(255,255,255,0.35); backdrop-filter: blur(6px);
+    border:1px solid rgba(255,255,255,0.5); padding:8px 18px; border-radius:999px;
+    font-size:0.8rem; letter-spacing:0.5px;
+  }
+  .scroll-cue{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    z-index:2; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;
+    opacity:0.7; display:flex; flex-direction:column; align-items:center; gap:6px;
+  }
+  .scroll-cue span{ width:1px; height:26px; background: currentColor; animation: pulse-down 1.8s ease-in-out infinite; }
+  @keyframes pulse-down{ 0%,100%{ opacity:0.2; } 50%{ opacity:0.9; } }
 
-  .divider{
-    width:36px; height:1.5px;
-    background:var(--blush);
-    margin:22px auto;
+  .letter-section{
+    min-height:100vh; background: var(--paper);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 70px 24px 90px; text-align:center;
   }
+  .letter-hint{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--mauve); margin-bottom:26px; }
 
-  .message{
-    font-family:'Fraunces', serif;
-    font-weight:400;
-    font-size:1.15rem;
-    line-height:1.65;
-    text-align:center;
-    color:var(--ink);
-    white-space:pre-wrap;
+  #envelope{ width:180px; height:130px; cursor:pointer; position:relative; margin-bottom:10px; transition: transform 0.3s ease; }
+  #envelope:active{ transform: scale(0.97); }
+  .env-body{
+    position:absolute; inset:0;
+    background: linear-gradient(135deg, #fff 0%, var(--blush) 140%);
+    border-radius:8px; box-shadow: 0 16px 34px rgba(59,42,53,0.18);
   }
+  .env-flap{
+    position:absolute; top:0; left:0; right:0; height:70px;
+    background: linear-gradient(135deg, var(--blush), var(--mauve));
+    clip-path: polygon(0 0, 100% 0, 50% 68%);
+    border-radius:8px 8px 0 0; transform-origin: top;
+    transition: transform 0.6s cubic-bezier(.4,0,.2,1); z-index:2;
+  }
+  .env-seal{
+    position:absolute; top:38px; left:50%; transform:translate(-50%,0);
+    width:34px; height:34px; border-radius:50%; background: var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Caveat', cursive; font-weight:700; color:#fff; font-size:1.1rem;
+    z-index:3; box-shadow: 0 4px 10px rgba(0,0,0,0.18); transition: opacity 0.3s ease;
+  }
+  #envelope.open .env-flap{ transform: rotateX(180deg); }
+  #envelope.open .env-seal{ opacity:0; }
+  #envelope.open{ pointer-events:none; }
+  .tap-label{ font-size:0.78rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--ink-soft); margin-top:14px; }
 
-  .memory-title{
-    font-family:'Caveat', cursive;
-    font-size:1.9rem;
-    color:var(--mauve);
-    text-align:center;
-    margin:0 0 4px;
+  .letter-paper{
+    max-width:460px; width:100%; margin-top:34px; background:#fff;
+    border-radius:14px; box-shadow: 0 20px 50px rgba(59,42,53,0.14);
+    padding: 38px 30px; opacity:0; transform: translateY(24px) scale(0.98);
+    transition: opacity 0.7s ease, transform 0.7s ease; text-align:center;
   }
-
-  .photos{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:center;
-    gap:14px;
-    margin:28px 0;
-  }
+  .letter-paper.show{ opacity:1; transform: translateY(0) scale(1); }
+  .memory-title{ font-family:'Caveat', cursive; font-size:1.9rem; color:var(--mauve); margin:0 0 14px; }
+  .photos{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:8px 0 26px; }
   .photo-card{
-    background:#fff;
-    padding:10px 10px 22px;
-    border-radius:6px;
-    box-shadow: 0 10px 28px rgba(59,42,53,0.12);
-    transform: rotate(var(--r, -2deg));
-    transition: transform 0.3s ease;
+    background:#fff; padding:8px 8px 18px; border-radius:6px;
+    box-shadow: 0 10px 26px rgba(59,42,53,0.14);
+    transform: rotate(var(--r, -2deg)); cursor:pointer; transition: transform 0.25s ease;
   }
+  .photo-card:hover{ transform: rotate(0deg) scale(1.04); }
   .photo-card:nth-child(even){ --r: 2deg; }
   .photo-card:nth-child(3n){ --r: -1.2deg; }
-  .photo-card img{
-    display:block;
-    width:150px;
-    height:180px;
-    object-fit:cover;
-    border-radius:2px;
-  }
+  .photo-card img{ display:block; width:150px; height:180px; object-fit:cover; border-radius:2px; }
 
-  .signoff{
-    font-family:'Caveat', cursive;
-    font-size:1.3rem;
-    color:var(--ink-soft);
-    text-align:center;
-    margin-top:32px;
+  .message{ font-family:'Fraunces', serif; font-weight:400; font-size:1.12rem; line-height:1.7; color:var(--ink); white-space:pre-wrap; }
+  .signoff{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--ink-soft); margin-top:22px; }
+
+  #lightbox{
+    position:fixed; inset:0; background:rgba(20,12,18,0.88);
+    display:none; align-items:center; justify-content:center; z-index:60; padding:20px;
   }
+  #lightbox.show{ display:flex; }
+  #lightbox img{ max-width:100%; max-height:85vh; border-radius:6px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
 
   footer{
-    text-align:center;
-    margin-top:44px;
-    font-size:0.68rem;
-    letter-spacing:1px;
-    color:var(--ink-soft);
-    opacity:0.5;
-    text-transform:uppercase;
+    text-align:center; padding: 30px 24px 50px;
+    font-size:0.68rem; letter-spacing:1px; color:var(--ink-soft);
+    opacity:0.55; text-transform:uppercase;
   }
 
   @media (max-width:400px){
-    h1{ font-size:2.15rem; }
-    .message{ font-size:1.05rem; }
+    h1{ font-size:2.2rem; }
+    .message{ font-size:1.02rem; }
   }
 </style>
 </head>
 <body>
-
-<div class="sunrise" aria-hidden="true"></div>
 
 <div id="gate">
   <div class="gate-label">good morning belongs to Niyu only</div>
@@ -231,36 +201,52 @@
   <div id="gateError">that's not quite it, try again</div>
 </div>
 
-<main id="app">
-  <div class="eyebrow">for niyu</div>
-  <div class="date" id="dateLabel"></div>
+<div id="app">
 
-  <h1>Good morning<span class="script">Niyu</span></h1>
-  <div class="divider"></div>
+  <section class="hero" id="hero">
+    <div class="stars" id="stars"></div>
+    <div class="sun" id="sun"></div>
+    <div class="hero-content">
+      <div class="eyebrow">for niyu</div>
+      <h1>Good morning<span class="script">Niyu</span></h1>
+      <div class="date" id="dateLabel"></div>
+      <div class="day-chip" id="dayChip"></div>
+    </div>
+    <div class="scroll-cue"><span></span>scroll</div>
+  </section>
 
-  <div id="memoryBlock" style="display:none;">
-    <div class="memory-title" id="memoryTitle"></div>
-    <div class="photos" id="photos"></div>
-  </div>
+  <section class="letter-section">
+    <div class="letter-hint">you've got something today</div>
+    <div id="envelope">
+      <div class="env-body"></div>
+      <div class="env-flap"></div>
+      <div class="env-seal">N</div>
+    </div>
+    <div class="tap-label" id="tapLabel">tap to open</div>
 
-  <div class="message" id="messageText">loading this morning's note...</div>
-
-  <div class="signoff" id="signoff"></div>
+    <div class="letter-paper" id="letterPaper">
+      <div id="memoryBlock" style="display:none;">
+        <div class="memory-title" id="memoryTitle"></div>
+        <div class="photos" id="photos"></div>
+      </div>
+      <div class="message" id="messageText">loading...</div>
+      <div class="signoff" id="signoff"></div>
+    </div>
+  </section>
 
   <footer>made every morning, for you</footer>
-</main>
+</div>
+
+<div id="lightbox"><img id="lightboxImg" src="" alt=""></div>
 
 <script>
 (async function(){
-  // ---------- Password gate ----------
   const CORRECT_HASH = "f6a6ede1db281475a3d12161f3630e225fb251ae0a21453a24520c3f00cb2d85";
-
   async function sha256(text){
     const enc = new TextEncoder().encode(text);
     const buf = await crypto.subtle.digest('SHA-256', enc);
     return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
   }
-
   const gate = document.getElementById('gate');
   const pwdInput = document.getElementById('pwd');
   const unlockBtn = document.getElementById('unlockBtn');
@@ -283,35 +269,89 @@
   }
   unlockBtn.addEventListener('click', tryUnlock);
   pwdInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
-
   if(sessionStorage.getItem('gm_unlocked')==='1'){
     gate.style.display='none';
     document.getElementById('app').classList.add('visible');
   }
 
-  // ---------- Content loading ----------
-  function todayIST(){
-    const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'}));
-    return now;
-  }
-  function fmtDate(d){
-    return d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-  }
-  function isoDate(d){
-    return d.toISOString().slice(0,10);
-  }
-  function dayOfYear(d){
-    const start = new Date(d.getFullYear(),0,0);
-    const diff = d - start;
-    return Math.floor(diff / 86400000);
+  function nowIST(){ return new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'})); }
+  const now = nowIST();
+  const hour = now.getHours() + now.getMinutes()/60;
+
+  const root = document.documentElement.style;
+  const starsEl = document.getElementById('stars');
+  const sunEl = document.getElementById('sun');
+  const hero = document.getElementById('hero');
+
+  function setSky(top, bottom, sun, text, showStars, sunTop){
+    root.setProperty('--sky-top', top);
+    root.setProperty('--sky-bottom', bottom);
+    root.setProperty('--sun-color', sun);
+    root.setProperty('--text-on-sky', text);
+    starsEl.style.opacity = showStars ? '1' : '0';
+    sunEl.style.top = sunTop + '%';
+    sunEl.style.opacity = sun ? '1' : '0';
   }
 
-  const today = todayIST();
-  document.getElementById('dateLabel').textContent = fmtDate(today);
+  if(hour >= 5 && hour < 8){
+    setSky('#FCEEDD','#F6C9B8','#E3A64B','#3B2A35', false, 62);
+  } else if(hour >= 8 && hour < 16){
+    setSky('#DCEBF2','#FBF6F0','#F2C868','#3B2A35', false, 12);
+  } else if(hour >= 16 && hour < 19){
+    setSky('#E9D6E8','#F0B39B','#E08A5B','#3B2A35', false, 55);
+  } else {
+    setSky('#241C36','#4A314D','#F6ECE5','#F6ECE5', true, 70);
+    let starsHTML = '';
+    for(let i=0;i<40;i++){
+      const top = Math.random()*70;
+      const left = Math.random()*100;
+      const delay = (Math.random()*3).toFixed(2);
+      starsHTML += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
+    }
+    starsEl.innerHTML = starsHTML;
+  }
+
+  sunEl.style.left = '18%';
+  if(hour >= 5 && hour < 19){
+    const cloud1 = document.createElement('div');
+    cloud1.className = 'cloud';
+    cloud1.style.cssText = 'width:140px;height:44px;top:18%;animation-duration:70s;';
+    const cloud2 = document.createElement('div');
+    cloud2.className = 'cloud';
+    cloud2.style.cssText = 'width:100px;height:32px;top:30%;animation-duration:95s;animation-delay:-30s;';
+    hero.appendChild(cloud1);
+    hero.appendChild(cloud2);
+  }
+
+  function fmtDate(d){ return d.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'}); }
+  function isoDate(d){ return d.toISOString().slice(0,10); }
+  function dayOfYear(d){ const start = new Date(d.getFullYear(),0,0); return Math.floor((d - start) / 86400000); }
+
+  document.getElementById('dateLabel').textContent = fmtDate(now);
+
+  const envelope = document.getElementById('envelope');
+  const tapLabel = document.getElementById('tapLabel');
+  const letterPaper = document.getElementById('letterPaper');
+  envelope.addEventListener('click', ()=>{
+    if(envelope.classList.contains('open')) return;
+    envelope.classList.add('open');
+    tapLabel.textContent = 'opening...';
+    setTimeout(()=>{
+      letterPaper.classList.add('show');
+      tapLabel.style.opacity = '0';
+    }, 500);
+  });
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  lightbox.addEventListener('click', ()=> lightbox.classList.remove('show'));
 
   try{
     const res = await fetch('message.json?t=' + Date.now());
     const data = await res.json();
+
+    document.getElementById('dayChip').textContent =
+      data.startDate ? ('day ' + (Math.floor((now - new Date(data.startDate)) / 86400000) + 1) + ' of good mornings') : '';
 
     const messageEl = document.getElementById('messageText');
     const memoryBlock = document.getElementById('memoryBlock');
@@ -320,13 +360,11 @@
     const signoffEl = document.getElementById('signoff');
 
     let entry = null;
-    if(data.today && data.today.date === isoDate(today)){
+    if(data.today && data.today.date === isoDate(now)){
       entry = data.today;
     } else {
       const fb = data.fallbacks || [];
-      if(fb.length){
-        entry = fb[dayOfYear(today) % fb.length];
-      }
+      if(fb.length) entry = fb[dayOfYear(now) % fb.length];
     }
 
     if(!entry){
@@ -342,6 +380,10 @@
           const img = document.createElement('img');
           img.src = src;
           img.alt = 'a memory';
+          img.addEventListener('click', ()=>{
+            lightboxImg.src = src;
+            lightbox.classList.add('show');
+          });
           card.appendChild(img);
           photosEl.appendChild(card);
         });
