@@ -1,379 +1,984 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Good Morning, Niyu</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no" />
+<title>Good Morning Niyu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Caveat:wght@500;600;700&family=Work+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Caveat:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#3B2A35;
-    --ink-soft:#6E5A66;
+    --ink:#241F1B;
+    --wall:#EDE3D3;
+    --wood:#8B5E3C;
+    --sage:#6B7A5E;
     --gold:#D9A441;
-    --blush:#F0C9C0;
-    --mauve:#B98CA5;
-    --paper:#FFFDFB;
-    --wall-1:#F7E9E2;
-    --wall-2:#F1DCD3;
-    --wood:#C89A73;
-    --wood-dark:#A97B54;
-
-    --sky-top:#FCEEDD;
-    --sky-mid:#F6C9B8;
-    --sky-bottom:#F3E4DC;
-    --sun-color:#E3A64B;
-    --text-on-sky:#3B2A35;
+    --dusk:#2B3A55;
+    --paper:#FBF6EC;
+    --glass: rgba(251,246,236,.72);
+    --glass-b: rgba(255,255,255,.5);
+    --shadow: 0 24px 60px rgba(20,14,10,.28);
+    --shadow-sm: 0 8px 24px rgba(20,14,10,.18);
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html,body{margin:0;padding:0; height:100%;}
-  body{
-    font-family:'Work Sans', sans-serif;
-    color:var(--ink);
-    overflow-x:hidden;
-    min-height:100dvh;
-    background: linear-gradient(180deg, var(--wall-1), var(--wall-2));
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{
+    margin:0;height:100%;overflow:hidden;background:#0c0e14;
+    font-family:'Inter',ui-sans-serif,system-ui,sans-serif;
+    color:var(--ink);touch-action:none;overscroll-behavior:none;
   }
+  #app{position:fixed;inset:0;}
+  canvas{display:block;width:100%;height:100%;touch-action:none;}
 
-  /* ================= PASSWORD GATE ================= */
+  /* ---------- Password Gate ---------- */
   #gate{
-    position:fixed; inset:0; z-index:80;
-    background:var(--paper);
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:22px; padding:24px; text-align:center;
-    transition: opacity 0.6s ease;
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(120% 120% at 50% 20%, #3a2c22 0%, #14100d 70%);
+    transition:opacity .8s ease, visibility .8s ease;
   }
-  #gate.hidden{ opacity:0; pointer-events:none; }
-  .gate-label{ font-family:'Caveat', cursive; font-size:1.6rem; color:var(--mauve); }
-  #pwd{
-    font-family:'Work Sans', sans-serif; font-size:1.1rem;
-    padding:14px 18px; border-radius:14px; border:1.5px solid var(--blush);
-    background:#fff; color:var(--ink); width:220px; text-align:center;
-    outline:none; letter-spacing:2px;
+  #gate.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+  .gateCard{
+    width:min(88vw,340px);text-align:center;color:#f4eade;
+    animation:riseIn 1s ease both;
   }
-  #pwd:focus{ border-color:var(--gold); }
-  #unlockBtn{
-    font-family:'Work Sans', sans-serif; font-size:0.95rem; letter-spacing:0.5px;
-    padding:12px 28px; border-radius:999px; border:none;
-    background:var(--ink); color:var(--paper); cursor:pointer;
-    transition: transform 0.2s ease;
+  @keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .gateCard h1{
+    font-family:'Fraunces',serif;font-weight:600;font-style:italic;
+    font-size:clamp(26px,7vw,36px);color:#f8ecdf;margin:0 0 6px;letter-spacing:-.02em;
   }
-  #unlockBtn:active{ transform:scale(0.97); }
-  #gateError{ font-size:0.85rem; color:#b5546b; height:16px; opacity:0; transition: opacity 0.2s ease; }
-  #gateError.show{ opacity:1; }
+  .gateCard p{font-size:13px;color:#c9b9a8;margin:0 0 22px;}
+  .gateCard input{
+    width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.07);color:#f8ecdf;font-size:16px;text-align:center;
+    letter-spacing:.12em;outline:none;font-family:'Inter',sans-serif;
+  }
+  .gateCard input:focus{border-color:var(--gold);}
+  .gateCard button{
+    margin-top:14px;width:100%;padding:13px;border-radius:14px;border:none;
+    background:var(--gold);color:#231a0f;font-weight:700;font-size:14px;cursor:pointer;
+    letter-spacing:.02em;
+  }
+  .gateErr{height:16px;font-size:12px;color:#e2a08c;margin-top:8px;}
 
-  #app{ opacity:0; transition: opacity 0.9s ease; }
-  #app.visible{ opacity:1; }
+  /* ---------- HUD ---------- */
+  .hud{
+    position:fixed;inset:0;display:flex;flex-direction:column;justify-content:space-between;
+    padding:max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom));
+    pointer-events:none;opacity:0;transition:opacity 1.4s ease;z-index:20;
+  }
+  .hud.show{opacity:1;}
+  .top,.bottomRow{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .card{
+    pointer-events:auto;background:var(--glass);border:1px solid var(--glass-b);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:var(--shadow-sm);
+    border-radius:18px;
+  }
+  .brand{padding:12px 16px;max-width:64vw;}
+  .brand h1{
+    margin:0;font-family:'Fraunces',serif;font-size:clamp(18px,5vw,26px);
+    font-weight:600;letter-spacing:-.02em;line-height:1.05;
+  }
+  .brand h1 em{color:#a75e3c;font-style:italic;}
+  .brand p{margin:4px 0 0;font-size:11.5px;color:#6b5a4c;}
+  .timeChip{padding:10px 14px;text-align:right;font-size:12px;color:#5a4a3d;min-width:88px;}
+  .timeChip .t{font-family:'Fraunces',serif;font-size:18px;font-weight:600;color:var(--ink);}
+  .hint{padding:10px 14px;font-size:11.5px;color:#6b5a4c;max-width:60vw;}
 
-  /* ================= ROOM ================= */
-  .room{
-    position:relative;
-    width:100%;
-    max-width:480px;
-    margin:0 auto;
-    min-height:100dvh;
-    padding: 28px 20px 100px;
-    display:flex; flex-direction:column; align-items:center;
+  /* ---------- Weather sticky note ---------- */
+  #stickyNote{
+    position:fixed;pointer-events:auto;z-index:15;
+    width:150px;padding:12px 13px 14px;border-radius:4px 14px 14px 4px;
+    background:#FDE9A8;box-shadow:0 10px 22px rgba(30,20,5,.28);
+    font-family:'Caveat',cursive;font-size:16px;line-height:1.28;color:#4a3a15;
+    transform:rotate(-4deg);opacity:0;transition:opacity 1s ease, transform .3s ease;
   }
+  #stickyNote.show{opacity:1;}
+  #stickyNote:active{transform:rotate(-4deg) scale(.97);}
+  #stickyNote .title{font-family:'Inter',sans-serif;font-size:9.5px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;color:#8a6a20;display:block;margin-bottom:4px;}
+  #stickyNote .emo{font-size:20px;display:block;margin-bottom:2px;}
 
-  .sign{
-    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
-    font-size:1.7rem; color:var(--ink); text-align:center; margin-bottom:4px;
+  /* ---------- Focus panel (jar / frame / mug) ---------- */
+  #panel{
+    position:fixed;left:0;right:0;bottom:0;z-index:30;
+    display:flex;justify-content:center;padding:0 16px max(20px,env(safe-area-inset-bottom));
+    transform:translateY(120%);transition:transform .6s cubic-bezier(.22,.9,.3,1);
+    pointer-events:none;
   }
-  .sign .script{ font-family:'Caveat', cursive; font-weight:700; color:var(--gold); font-size:1.25em; margin-left:6px; }
-  .sub-eyebrow{ font-size:0.65rem; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink-soft); opacity:0.7; margin-bottom:18px; }
+  #panel.show{transform:translateY(0);pointer-events:auto;}
+  .panelCard{
+    width:min(94vw,420px);background:var(--paper);border-radius:26px;
+    box-shadow:var(--shadow);padding:22px 22px 20px;position:relative;
+    border:1px solid rgba(255,255,255,.6);
+  }
+  .panelClose{
+    position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;
+    background:rgba(36,31,27,.08);border:none;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;font-size:15px;color:#4a3d33;
+  }
+  .panelEyebrow{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a75e3c;margin:0 0 6px;}
+  .panelTitle{font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:0 0 10px;color:var(--ink);}
+  .panelBody{font-family:'Caveat',cursive;font-size:19px;line-height:1.42;color:#3a2f27;white-space:pre-wrap;}
+  .panelImg{width:100%;border-radius:16px;display:block;margin-bottom:12px;object-fit:cover;max-height:52vh;}
+  .panelCaption{font-family:'Caveat',cursive;font-size:17px;color:#6b5a4c;text-align:center;margin-top:6px;}
+  .dayBig{font-family:'Fraunces',serif;font-size:44px;font-weight:600;color:#a75e3c;text-align:center;margin:6px 0 2px;}
+  .dayLabel{text-align:center;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8a7a6c;}
 
-  /* ---- window ---- */
-  .window-wrap{
-    position:relative;
-    width:78%;
-    aspect-ratio: 4 / 5;
-    max-height:32vh;
-    margin-bottom:6px;
+  #loadingVeil{
+    position:fixed;inset:0;background:#0c0e14;z-index:90;display:flex;align-items:center;justify-content:center;
+    transition:opacity .9s ease, visibility .9s ease;color:#c9b9a8;font-family:'Fraunces',serif;font-style:italic;font-size:15px;
   }
-  .window-frame{
-    position:absolute; inset:0;
-    background:#fff;
-    border-radius:16px 16px 6px 6px;
-    padding:8px;
-    box-shadow: 0 14px 30px rgba(59,42,53,0.16);
-  }
-  .window-sky{
-    position:relative;
-    width:100%; height:100%;
-    border-radius:10px 10px 3px 3px;
-    overflow:hidden;
-    background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 55%, var(--sky-bottom) 100%);
-    transition: background 1.8s ease;
-  }
-  .window-cross-v{ position:absolute; top:0; bottom:0; left:50%; width:4px; background:#fff; transform:translateX(-50%); z-index:3; }
-  .window-cross-h{ position:absolute; left:0; right:0; top:50%; height:4px; background:#fff; transform:translateY(-50%); z-index:3; }
-
-  .stars{ position:absolute; inset:0; opacity:0; transition:opacity 1.5s ease; }
-  .star{ position:absolute; width:2px; height:2px; background:#fff; border-radius:50%; animation: twinkle 3s ease-in-out infinite; }
-  @keyframes twinkle{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
-  .cloud{ position:absolute; background: rgba(255,255,255,0.65); border-radius:50%; filter: blur(5px); animation: drift linear infinite; }
-  @keyframes drift{ from{ transform: translateX(-40px); } to{ transform: translateX(calc(100% + 40px)); } }
-  .rain{ position:absolute; inset:0; opacity:0; transition:opacity 1s ease; }
-  .drop{ position:absolute; width:2px; height:10px; top:-14px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.6)); animation: fall linear infinite; }
-  @keyframes fall{ to{ transform: translateY(140px); } }
-  .sun{
-    position:absolute; width:34px; height:34px; border-radius:50%; left:16%;
-    background: var(--sun-color); box-shadow: 0 0 22px 6px color-mix(in srgb, var(--sun-color) 55%, transparent);
-    transition: background 1.8s ease, opacity 1.5s ease, top 2s ease;
-  }
-
-  .curtain{
-    position:absolute; top:-6px; width:26px; height:calc(100% + 12px);
-    background: linear-gradient(180deg, var(--blush), var(--mauve));
-    border-radius: 0 0 40% 40%;
-    z-index:4; opacity:0.92;
-    animation: sway 5s ease-in-out infinite;
-    box-shadow: 2px 0 6px rgba(59,42,53,0.08);
-  }
-  .curtain.left{ left:-4px; transform-origin:top left; }
-  .curtain.right{ right:-4px; transform-origin:top right; animation-delay:0.6s; }
-  @keyframes sway{ 0%,100%{ transform: rotate(-2deg); } 50%{ transform: rotate(2deg); } }
-
-  .sticky-note{
-    position:absolute; top:-14px; right:-14px;
-    width:100px;
-    background:#FFF7D6;
-    color:#4A3B1E;
-    font-size:0.62rem;
-    line-height:1.35;
-    padding:10px 9px 8px;
-    border-radius:3px;
-    box-shadow: 0 8px 16px rgba(59,42,53,0.18);
-    transform: rotate(6deg);
-    z-index:5;
-  }
-  .sticky-note::before{
-    content:''; position:absolute; top:-6px; left:50%; transform:translateX(-50%);
-    width:12px; height:12px; border-radius:50%;
-    background: var(--gold); box-shadow:0 2px 4px rgba(0,0,0,0.25);
-  }
-
-  /* ---- shelf ---- */
-  .shelf-wrap{ width:92%; margin-top:20px; position:relative; }
-  .shelf{
-    width:100%; height:16px;
-    background: linear-gradient(180deg, var(--wood), var(--wood-dark));
-    border-radius:4px;
-    box-shadow: 0 8px 14px rgba(59,42,53,0.18);
-  }
-  .shelf-items{
-    display:flex; align-items:flex-end; justify-content:space-around;
-    margin-bottom:-4px;
-    padding: 0 4px;
-  }
-
-  /* ---- frame (on wall, sits above shelf row to one side) ---- */
-  .frame-wrap{ display:flex; flex-direction:column; align-items:center; }
-  .frame{
-    width:76px; height:96px;
-    background:#fff;
-    border-radius:6px;
-    padding:5px;
-    box-shadow: 0 10px 22px rgba(59,42,53,0.18);
-    transform: rotate(-3deg);
-    cursor:pointer;
-    transition: transform 0.25s ease;
-  }
-  .frame:active{ transform: rotate(-3deg) scale(0.96); }
-  .frame-inner{
-    width:100%; height:100%; border-radius:3px; overflow:hidden;
-    background: linear-gradient(160deg, var(--blush), var(--mauve));
-    display:flex; align-items:center; justify-content:center;
-  }
-  .frame-inner img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .frame-placeholder{ width:26px; height:26px; opacity:0.8; }
-  .item-label{ font-family:'Caveat', cursive; font-size:0.95rem; color:var(--ink-soft); margin-top:8px; text-align:center; }
-
-  /* ---- mug ---- */
-  .mug-wrap{ display:flex; flex-direction:column; align-items:center; position:relative; }
-  .mug{ width:56px; height:56px; cursor:pointer; position:relative; transition: transform 0.2s ease; }
-  .mug:active{ transform: scale(0.94); }
-  .steam{ position:absolute; top:-16px; left:50%; transform:translateX(-50%); width:30px; height:20px; pointer-events:none; }
-  .steam span{
-    position:absolute; bottom:0; width:3px; height:10px; border-radius:3px;
-    background: rgba(255,255,255,0.7);
-    animation: steamRise 2.6s ease-in-out infinite;
-    opacity:0;
-  }
-  .steam span:nth-child(1){ left:4px; animation-delay:0s; }
-  .steam span:nth-child(2){ left:13px; animation-delay:0.7s; }
-  .steam span:nth-child(3){ left:22px; animation-delay:1.4s; }
-  @keyframes steamRise{
-    0%{ transform: translateY(0) scaleX(1); opacity:0; }
-    30%{ opacity:0.6; }
-    100%{ transform: translateY(-22px) scaleX(1.6); opacity:0; }
-  }
-  .day-tooltip{
-    position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%) translateY(6px);
-    background: var(--ink); color:var(--paper);
-    font-size:0.68rem; letter-spacing:0.3px; white-space:nowrap;
-    padding:7px 12px; border-radius:8px;
-    opacity:0; pointer-events:none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-  .day-tooltip::after{
-    content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
-    border:5px solid transparent; border-top-color: var(--ink);
-  }
-  .day-tooltip.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-
-  /* ---- jar ---- */
-  .jar-wrap{ display:flex; flex-direction:column; align-items:center; }
-  .jar{ width:58px; height:70px; cursor:pointer; transition: transform 0.15s ease; transform-origin:bottom center; }
-  .jar.shake{ animation: jarShake 0.55s ease; }
-  @keyframes jarShake{
-    0%,100%{ transform: rotate(0deg); }
-    20%{ transform: rotate(-8deg); }
-    40%{ transform: rotate(7deg); }
-    60%{ transform: rotate(-5deg); }
-    80%{ transform: rotate(3deg); }
-  }
-
-  /* ---- plant ---- */
-  .plant-wrap{ display:flex; flex-direction:column; align-items:center; }
-  .plant{ width:56px; height:64px; transition: transform 0.6s ease; }
-
-  /* ================= MODAL ================= */
-  #overlay{
-    position:fixed; inset:0; z-index:70;
-    background: rgba(30,20,26,0.55);
-    backdrop-filter: blur(2px);
-    display:flex; align-items:center; justify-content:center;
-    padding:24px;
-    opacity:0; pointer-events:none;
-    transition: opacity 0.35s ease;
-  }
-  #overlay.show{ opacity:1; pointer-events:auto; }
-  .modal-card{
-    background:#fff; border-radius:18px;
-    max-width:420px; width:100%;
-    max-height:82vh; overflow-y:auto;
-    padding: 30px 26px;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.35);
-    text-align:center;
-    transform: scale(0.92) translateY(10px);
-    opacity:0;
-    transition: transform 0.35s cubic-bezier(.2,.9,.3,1.05), opacity 0.3s ease;
-  }
-  #overlay.show .modal-card{ transform: scale(1) translateY(0); opacity:1; }
-
-  .modal-close{
-    position:sticky; top:0; float:right; margin:-10px -10px 0 0;
-    width:30px; height:30px; border-radius:50%;
-    background:var(--paper); border:none; color:var(--ink-soft);
-    font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  }
-
-  .memory-title{ font-family:'Caveat', cursive; font-size:1.7rem; color:var(--mauve); margin:0 0 12px; clear:both; }
-  .modal-message{
-    font-family:'Fraunces', serif; font-weight:400; font-size:1.08rem; line-height:1.7;
-    color:var(--ink); white-space:pre-wrap; text-align:center; clear:both;
-  }
-  .modal-signoff{ font-family:'Caveat', cursive; font-size:1.2rem; color:var(--ink-soft); margin-top:18px; }
-  .modal-photo{ width:100%; border-radius:10px; margin-bottom:16px; clear:both; }
-
-  footer{
-    text-align:center; padding: 18px 24px 10px;
-    font-size:0.63rem; letter-spacing:1px; color: var(--ink-soft);
-    opacity:0.55; text-transform:uppercase;
-  }
+  #loadingVeil.hidden{opacity:0;visibility:hidden;}
 </style>
 </head>
 <body>
 
+<div id="app"></div>
+
+<div id="loadingVeil">opening the window…</div>
+
 <div id="gate">
-  <div class="gate-label">good morning belongs to Niyu only</div>
-  <input id="pwd" type="password" inputmode="numeric" placeholder="• • • • • • • •" maxlength="20" autocomplete="off">
-  <button id="unlockBtn">Unlock</button>
-  <div id="gateError">that's not quite it, try again</div>
-</div>
-
-<div id="app">
-  <div class="room">
-
-    <div class="sign">Good morning<span class="script">Niyu</span></div>
-    <div class="sub-eyebrow" id="dateLabel"></div>
-
-    <div class="window-wrap">
-      <div class="curtain left"></div>
-      <div class="curtain right"></div>
-      <div class="window-frame">
-        <div class="window-sky" id="windowSky">
-          <div class="stars" id="stars"></div>
-          <div class="rain" id="rain"></div>
-          <div class="sun" id="sun"></div>
-          <div class="window-cross-v"></div>
-          <div class="window-cross-h"></div>
-        </div>
-      </div>
-      <div class="sticky-note" id="weatherNote">loading weather...</div>
-    </div>
-
-    <div class="shelf-wrap">
-      <div class="shelf-items">
-
-        <div class="frame-wrap">
-          <div class="frame" id="frameBtn">
-            <div class="frame-inner" id="frameInner">
-              <svg class="frame-placeholder" viewBox="0 0 32 32" fill="none"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="#fff" fill-opacity="0.85"/></svg>
-            </div>
-          </div>
-          <div class="item-label">us</div>
-        </div>
-
-        <div class="mug-wrap">
-          <div class="mug" id="mugBtn">
-            <div class="day-tooltip" id="dayTooltip"></div>
-            <div class="steam" id="steam"><span></span><span></span><span></span></div>
-            <svg viewBox="0 0 60 60" width="56" height="56">
-              <path d="M42 24 Q54 24 54 34 Q54 44 42 44" stroke="#fff" stroke-width="4" fill="none"/>
-              <rect x="10" y="22" width="32" height="24" rx="5" fill="#fff"/>
-              <path d="M10 26 h32 v6 a16 16 0 0 1 -32 0 z" fill="var(--mauve)"/>
-            </svg>
-          </div>
-          <div class="item-label">morning brew</div>
-        </div>
-
-        <div class="jar-wrap">
-          <div class="jar" id="jarBtn">
-            <svg viewBox="0 0 60 70" width="58" height="68">
-              <rect x="16" y="8" width="28" height="10" rx="3" fill="var(--gold)"/>
-              <rect x="12" y="18" width="36" height="46" rx="10" fill="#ffffff" fill-opacity="0.9" stroke="var(--mauve)" stroke-width="2"/>
-              <rect x="21" y="30" width="18" height="5" rx="2.5" fill="var(--blush)"/>
-              <rect x="21" y="40" width="18" height="5" rx="2.5" fill="var(--blush)" opacity="0.7"/>
-            </svg>
-          </div>
-          <div class="item-label" id="jarLabel">shake for your<br>morning note</div>
-        </div>
-
-        <div class="plant-wrap">
-          <div class="plant" id="plantSvg"></div>
-          <div class="item-label">growing<br>with us</div>
-        </div>
-
-      </div>
-      <div class="shelf"></div>
-    </div>
-
+  <div class="gateCard">
+    <h1>Good morning, <em>Niyu</em></h1>
+    <p>this little room only opens for you</p>
+    <input id="gateInput" type="password" inputmode="numeric" placeholder="• • • • • • • •" autocomplete="off" />
+    <div class="gateErr" id="gateErr"></div>
+    <button id="gateBtn">Come in</button>
   </div>
-
-  <footer>made every morning, for you</footer>
 </div>
 
-<div id="overlay">
-  <div class="modal-card" id="modalCard"></div>
+<div class="hud" id="hud">
+  <div class="top">
+    <div class="card brand">
+      <h1>Good morning, <em>Niyu</em></h1>
+      <p id="roomTitle">A little room made for your mornings</p>
+    </div>
+    <div class="card timeChip">
+      <div class="t" id="clockText">--:--</div>
+      <div id="dateText">-</div>
+    </div>
+  </div>
+  <div class="bottomRow">
+    <div class="card hint">Tap the jar, the frame, or the mug ☺</div>
+    <div class="card hint" id="weatherChip">—</div>
+  </div>
 </div>
 
+<div id="stickyNote"></div>
+
+<div id="panel">
+  <div class="panelCard">
+    <button class="panelClose" id="panelClose">✕</button>
+    <div id="panelInner"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-window.SITE_DATA_URL = 'message.json';
+/* =========================================================
+   GOOD MORNING NIYU — cozy 3D room
+   ========================================================= */
+
+const PASSWORD = "08022025";
+const CONTENT_URL = "content.json";
+
+let CONTENT = null;
+let scene, camera, renderer, clock3d;
+let raycaster, pointer;
+let interactables = {};
+let cameraState = { mode:"intro", t:0, target:new THREE.Vector3(), from:null, to:null,
+                     lookFrom:null, lookTo:null, dur:1, focusKey:null };
+let idleTarget = new THREE.Vector3(0,1.35,-1.1);
+let idleBase = new THREE.Vector3(0,1.62,4.4);
+let drag = { active:false, sx:0, sy:0, yaw:0, pitch:0, curYaw:0, curPitch:0 };
+let weatherCat = "cloudy", isDay = true;
+let rainDrops = [], stars = [], sunMoon;
+let curtains = [];
+let plantGroup, mugSteam = [];
+
+/* ---------------- gate ---------------- */
+const gate = document.getElementById('gate');
+const gateInput = document.getElementById('gateInput');
+const gateBtn = document.getElementById('gateBtn');
+const gateErr = document.getElementById('gateErr');
+
+function tryUnlock(){
+  if(gateInput.value.trim() === PASSWORD){
+    localStorage.setItem('niyu_unlocked','1');
+    gate.classList.add('hidden');
+    startExperience();
+  } else {
+    gateErr.textContent = "that's not quite it ❤";
+    gateInput.value='';
+  }
+}
+gateBtn.addEventListener('click', tryUnlock);
+gateInput.addEventListener('keydown', e=>{ if(e.key==='Enter') tryUnlock(); });
+
+if(localStorage.getItem('niyu_unlocked') === '1'){
+  gate.classList.add('hidden');
+  window.addEventListener('DOMContentLoaded', startExperience);
+} else {
+  window.addEventListener('DOMContentLoaded', ()=>{ /* wait for password */ });
+}
+
+/* ---------------- boot ---------------- */
+let booted = false;
+async function startExperience(){
+  if(booted) return; booted = true;
+  try{
+    const res = await fetch(CONTENT_URL, {cache:'no-store'});
+    CONTENT = await res.json();
+  }catch(e){
+    CONTENT = { name:"Niyu", dayCount:1, roomTitle:"A little room made for your mornings",
+      note:{title:"Morning note",body:"Good morning, love."}, jarHint:"Shake the jar",
+      photos:[{src:"assets/today-photo.jpg",caption:"Today"}],
+      weatherMessages:{}, location:{lat:19.1867,lon:73.1937,label:"Ambernath"} };
+  }
+  document.getElementById('roomTitle').textContent = CONTENT.roomTitle || "A little room made for your mornings";
+  initThree();
+  fetchWeather();
+  animate();
+  document.getElementById('loadingVeil').classList.add('hidden');
+}
+
+/* ---------------- three.js init ---------------- */
+function initThree(){
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x0c0e14);
+  scene.fog = new THREE.Fog(0x1b1712, 8, 22);
+
+  camera = new THREE.PerspectiveCamera(42, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0, 3.4, 16);
+  camera.lookAt(0,1.4,-2);
+
+  renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false, powerPreference:"high-performance" });
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  document.getElementById('app').appendChild(renderer.domElement);
+
+  clock3d = new THREE.Clock();
+  raycaster = new THREE.Raycaster();
+  pointer = new THREE.Vector2();
+
+  buildLights();
+  buildRoom();
+  buildWindowSky();
+  buildFurniture();
+  buildJar();
+  buildFrame();
+  buildMug();
+  buildPlant();
+  buildClockObject();
+
+  window.addEventListener('resize', onResize);
+  const dom = renderer.domElement;
+  dom.addEventListener('pointerdown', onPointerDown);
+  dom.addEventListener('pointermove', onPointerMove);
+  dom.addEventListener('pointerup', onPointerUp);
+  document.getElementById('panelClose').addEventListener('click', closePanel);
+
+  // begin cinematic intro
+  cameraState.mode = "intro";
+  cameraState.t = 0;
+  cameraState.dur = 4.2;
+  cameraState.from = camera.position.clone();
+  cameraState.to = idleBase.clone();
+  cameraState.lookFrom = new THREE.Vector3(0,1.6,-2);
+  cameraState.lookTo = idleTarget.clone();
+
+  setTimeout(()=>{ document.getElementById('hud').classList.add('show'); }, 3600);
+  setTimeout(()=>{ positionStickyNote(); document.getElementById('stickyNote').classList.add('show'); }, 4400);
+
+  tickClock();
+  setInterval(tickClock, 1000*20);
+}
+
+function onResize(){
+  camera.aspect = innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+}
+
+/* ---------------- lights ---------------- */
+let sunLight, ambLight, lampLight;
+function buildLights(){
+  ambLight = new THREE.AmbientLight(0xfff1e0, 0.55);
+  scene.add(ambLight);
+
+  sunLight = new THREE.DirectionalLight(0xfff2d8, 1.2);
+  sunLight.position.set(-3, 4, -1);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.set(1024,1024);
+  sunLight.shadow.camera.left=-5; sunLight.shadow.camera.right=5;
+  sunLight.shadow.camera.top=5; sunLight.shadow.camera.bottom=-5;
+  sunLight.shadow.bias=-0.002;
+  scene.add(sunLight);
+
+  lampLight = new THREE.PointLight(0xffb877, 0, 3.2, 2);
+  lampLight.position.set(2.15, 1.15, 0.85);
+  lampLight.castShadow = false;
+  scene.add(lampLight);
+
+  const fill = new THREE.HemisphereLight(0xEDE3D3, 0x3a2c22, 0.5);
+  scene.add(fill);
+}
+
+/* ---------------- helpers ---------------- */
+function woodTexture(hex1, hex2){
+  const c = document.createElement('canvas'); c.width=256; c.height=256;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = hex1; ctx.fillRect(0,0,256,256);
+  for(let i=0;i<40;i++){
+    ctx.strokeStyle = hex2; ctx.globalAlpha = 0.12+Math.random()*0.15;
+    ctx.lineWidth = 1+Math.random()*2;
+    ctx.beginPath();
+    const y = Math.random()*256;
+    ctx.moveTo(0,y);
+    ctx.bezierCurveTo(80,y+(Math.random()*14-7),160,y+(Math.random()*14-7),256,y+(Math.random()*10-5));
+    ctx.stroke();
+  }
+  const tex = new THREE.CanvasTexture(c);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  return tex;
+}
+function fabricTexture(hex){
+  const c=document.createElement('canvas'); c.width=64;c.height=64;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle=hex; ctx.fillRect(0,0,64,64);
+  ctx.globalAlpha=0.08;
+  for(let y=0;y<64;y+=2){ ctx.fillStyle= (y%4===0)?'#000':'#fff'; ctx.fillRect(0,y,64,1); }
+  return new THREE.CanvasTexture(c);
+}
+function roundedBox(w,h,d,color,rough=0.85,metal=0.02){
+  const geo = new THREE.BoxGeometry(w,h,d,2,2,2);
+  const mat = new THREE.MeshStandardMaterial({color, roughness:rough, metalness:metal});
+  const m = new THREE.Mesh(geo, mat);
+  m.castShadow = true; m.receiveShadow = true;
+  return m;
+}
+
+/* ---------------- room shell ---------------- */
+function buildRoom(){
+  const floorTex = woodTexture('#8B5E3C','#5f3d24');
+  floorTex.repeat.set(4,4);
+  const floor = new THREE.Mesh(
+    new THREE.PlaneGeometry(10,10),
+    new THREE.MeshStandardMaterial({map:floorTex, roughness:0.75, metalness:0.05})
+  );
+  floor.rotation.x = -Math.PI/2;
+  floor.receiveShadow = true;
+  scene.add(floor);
+
+  const rug = new THREE.Mesh(
+    new THREE.CircleGeometry(1.7, 40),
+    new THREE.MeshStandardMaterial({color:0xC98B62, roughness:0.95})
+  );
+  rug.rotation.x = -Math.PI/2; rug.position.set(0.6,0.01,0.4);
+  rug.receiveShadow = true;
+  scene.add(rug);
+
+  const wallMat = new THREE.MeshStandardMaterial({color:0xEDE3D3, roughness:0.95});
+  const backWall = new THREE.Mesh(new THREE.PlaneGeometry(10,5), wallMat);
+  backWall.position.set(0,2.5,-3);
+  backWall.receiveShadow = true;
+  scene.add(backWall);
+
+  const sideWall = new THREE.Mesh(new THREE.PlaneGeometry(10,5), wallMat.clone());
+  sideWall.rotation.y = Math.PI/2;
+  sideWall.position.set(-4.2,2.5,0);
+  sideWall.receiveShadow = true;
+  scene.add(sideWall);
+
+  // baseboard
+  const base = new THREE.Mesh(new THREE.BoxGeometry(10,0.12,0.05), new THREE.MeshStandardMaterial({color:0xD9CBB4}));
+  base.position.set(0,0.06,-2.97); scene.add(base);
+}
+
+/* ---------------- window + sky ---------------- */
+let windowFrameGroup, skyPlane, skyCanvas, skyCtx, skyTex;
+function buildWindowSky(){
+  windowFrameGroup = new THREE.Group();
+  windowFrameGroup.position.set(0,1.75,-2.96);
+
+  skyCanvas = document.createElement('canvas'); skyCanvas.width=256; skyCanvas.height=320;
+  skyCtx = skyCanvas.getContext('2d');
+  skyTex = new THREE.CanvasTexture(skyCanvas);
+
+  skyPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.05,2.55),
+    new THREE.MeshBasicMaterial({map:skyTex})
+  );
+  windowFrameGroup.add(skyPlane);
+
+  // frame (mullions)
+  const frameMat = new THREE.MeshStandardMaterial({color:0xF5EFE3, roughness:0.6});
+  const outer = new THREE.Mesh(new THREE.BoxGeometry(2.3,2.8,0.12), frameMat);
+  outer.position.z = -0.03;
+  windowFrameGroup.add(outer);
+  const vMull = new THREE.Mesh(new THREE.BoxGeometry(0.05,2.55,0.05), frameMat);
+  vMull.position.z=0.02; windowFrameGroup.add(vMull);
+  const hMull = new THREE.Mesh(new THREE.BoxGeometry(2.05,0.05,0.05), frameMat);
+  hMull.position.z=0.02; windowFrameGroup.add(hMull);
+  const sill = new THREE.Mesh(new THREE.BoxGeometry(2.5,0.08,0.28), frameMat);
+  sill.position.set(0,-1.42,0.1); sill.castShadow=true; sill.receiveShadow=true;
+  windowFrameGroup.add(sill);
+
+  scene.add(windowFrameGroup);
+
+  // curtains either side
+  const curtMat = new THREE.MeshStandardMaterial({map: fabricTexture('#E7C7B8'), color:0xE7C7B8, roughness:0.9, side:THREE.DoubleSide});
+  [-1.35, 1.35].forEach((x,i)=>{
+    const geo = new THREE.PlaneGeometry(0.75,2.85,10,16);
+    const m = new THREE.Mesh(geo, curtMat.clone());
+    m.position.set(x, 1.75, -2.86);
+    m.castShadow = true;
+    scene.add(m);
+    curtains.push({mesh:m, seed:i*3.1, geo});
+  });
+
+  // stars group (hidden until night)
+  const starGeo = new THREE.BufferGeometry();
+  const starPos = [];
+  for(let i=0;i<60;i++){
+    starPos.push((Math.random()-0.5)*1.8, (Math.random()-0.2)*2.0, 0);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPos,3));
+  const starMat = new THREE.PointsMaterial({color:0xfff6d8, size:0.02, transparent:true, opacity:0});
+  const starPoints = new THREE.Points(starGeo, starMat);
+  starPoints.position.z = 0.01;
+  windowFrameGroup.add(starPoints);
+  stars = starPoints;
+
+  // sun/moon disc
+  sunMoon = new THREE.Mesh(new THREE.CircleGeometry(0.16,24), new THREE.MeshBasicMaterial({color:0xFFE9A8}));
+  sunMoon.position.set(0.5,0.7,0.02);
+  windowFrameGroup.add(sunMoon);
+
+  // rain particles
+  const rainGeo = new THREE.BufferGeometry();
+  const rainPos = [];
+  for(let i=0;i<80;i++){
+    rainPos.push((Math.random()-0.5)*2.0, Math.random()*2.5-1.2, 0.015);
+  }
+  rainGeo.setAttribute('position', new THREE.Float32BufferAttribute(rainPos,3));
+  const rainMat = new THREE.PointsMaterial({color:0xBFD6E8, size:0.03, transparent:true, opacity:0});
+  const rainPoints = new THREE.Points(rainGeo, rainMat);
+  windowFrameGroup.add(rainPoints);
+  rainDrops = rainPoints;
+}
+
+function drawSky(){
+  const w=skyCanvas.width,h=skyCanvas.height;
+  let top, bottom;
+  const hour = new Date().getHours() + new Date().getMinutes()/60;
+  isDay = hour>=6 && hour<18.5;
+
+  if(weatherCat==='thunderstorm'){ top='#3a4152'; bottom='#5c6579'; }
+  else if(weatherCat==='rain'){ top = isDay? '#7f93a6':'#232c3d'; bottom = isDay? '#b7c4cf':'#3b4658'; }
+  else if(weatherCat==='fog'){ top='#c7c3ba'; bottom='#ded9cd'; }
+  else if(!isDay){ top='#0d1730'; bottom='#2b3a55'; }
+  else if(hour<7.5 || hour>17){ top='#f4a35c'; bottom='#ffd9a0'; } // golden hour
+  else { top = weatherCat==='cloudy' ? '#9fb2c4' : '#7ec8e3'; bottom = weatherCat==='cloudy' ? '#d7dfe6' : '#cdeaf5'; }
+
+  const g = skyCtx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0, top); g.addColorStop(1, bottom);
+  skyCtx.fillStyle = g; skyCtx.fillRect(0,0,w,h);
+
+  // clouds
+  if(weatherCat==='cloudy'||weatherCat==='rain'||weatherCat==='thunderstorm'){
+    skyCtx.fillStyle = 'rgba(255,255,255,0.35)';
+    for(let i=0;i<5;i++){
+      const cx=40+i*45+Math.sin(i)*10, cy=60+((i%3)*30);
+      skyCtx.beginPath();
+      skyCtx.ellipse(cx,cy,30,14,0,0,Math.PI*2);
+      skyCtx.fill();
+    }
+  }
+  skyTex.needsUpdate = true;
+}
+
+/* ---------------- furniture ---------------- */
+function buildFurniture(){
+  // sofa
+  const sofaMat = new THREE.MeshStandardMaterial({color:0x6B7A5E, roughness:0.9});
+  const sofaBase = roundedBox(1.9,0.5,0.85,0x6B7A5E,0.9);
+  sofaBase.position.set(1.3,0.28,0.9); sofaBase.material=sofaMat; scene.add(sofaBase);
+  const sofaBack = roundedBox(1.9,0.6,0.2,0x6B7A5E,0.9);
+  sofaBack.position.set(1.3,0.62,1.3); sofaBack.material=sofaMat; scene.add(sofaBack);
+  [0.5,2.1].forEach(x=>{
+    const arm = roundedBox(0.22,0.55,0.9,0x5c6b50,0.9);
+    arm.position.set(x,0.5,0.9); scene.add(arm);
+  });
+  const cushionColors=[0xD9A441,0x8B5E3C,0xE7C7B8];
+  for(let i=0;i<3;i++){
+    const cushion = roundedBox(0.58,0.16,0.7,cushionColors[i],0.85);
+    cushion.position.set(0.5+i*0.63,0.56,0.9);
+    scene.add(cushion);
+  }
+
+  // coffee table
+  const tableTop = roundedBox(0.85,0.06,0.5,0x5f3d24,0.5);
+  tableTop.position.set(0.9,0.42,-0.15); scene.add(tableTop);
+  [[-0.35,-0.2],[0.35,-0.2],[-0.35,0.2],[0.35,0.2]].forEach(([dx,dz])=>{
+    const leg = roundedBox(0.05,0.4,0.05,0x3a2417,0.6);
+    leg.position.set(0.9+dx,0.2,-0.15+dz); scene.add(leg);
+  });
+
+  // bookshelf
+  const shelfMat = new THREE.MeshStandardMaterial({map: woodTexture('#6b4429','#4a2e1a'), roughness:0.8});
+  const shelfUnit = roundedBox(1.1,1.9,0.32,0x6b4429,0.8);
+  shelfUnit.material = shelfMat;
+  shelfUnit.position.set(-3.2,0.95,-2.4); scene.add(shelfUnit);
+  const bookColors=[0xA75E3C,0x6B7A5E,0xD9A441,0x2B3A55,0x8B5E3C,0xC98B62];
+  for(let row=0;row<3;row++){
+    let x=-3.55;
+    for(let i=0;i<5;i++){
+      const bw = 0.05+Math.random()*0.04;
+      const bh = 0.28+Math.random()*0.08;
+      const book = roundedBox(bw,bh,0.24,bookColors[(row+i)%bookColors.length],0.6);
+      book.position.set(x, 0.35+row*0.62, -2.4);
+      scene.add(book);
+      x += bw+0.015;
+    }
+  }
+
+  // side table + lamp base
+  const sideTop = roundedBox(0.4,0.05,0.4,0x5f3d24,0.5);
+  sideTop.position.set(2.15,0.5,0.85); scene.add(sideTop);
+  const sideLeg = roundedBox(0.06,0.5,0.06,0x3a2417,0.6);
+  sideLeg.position.set(2.15,0.25,0.85); scene.add(sideLeg);
+
+  const lampBase = roundedBox(0.08,0.25,0.08,0x2b2118,0.5,0.3);
+  lampBase.position.set(2.15,0.65,0.85); scene.add(lampBase);
+  const lampShade = new THREE.Mesh(
+    new THREE.ConeGeometry(0.18,0.22,16,1,true),
+    new THREE.MeshStandardMaterial({color:0xF3D9A8, roughness:0.6, emissive:0xF3D9A8, emissiveIntensity:0, side:THREE.DoubleSide})
+  );
+  lampShade.position.set(2.15,0.95,0.85);
+  scene.add(lampShade);
+  window._lampShade = lampShade;
+
+  // fairy lights (small emissive spheres along a gentle curve near window)
+  const fairyGroup = new THREE.Group();
+  for(let i=0;i<14;i++){
+    const t=i/13;
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8),
+      new THREE.MeshStandardMaterial({color:0xFFE1A1, emissive:0xFFCB6B, emissiveIntensity:0.9}));
+    bulb.position.set(-1.05+t*2.1, 3.05-Math.sin(t*Math.PI)*0.18, -2.9);
+    fairyGroup.add(bulb);
+  }
+  scene.add(fairyGroup);
+}
+
+/* ---------------- jar of notes ---------------- */
+function buildJar(){
+  const group = new THREE.Group();
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color:0xffffff, transparent:true, opacity:0.28, roughness:0.05, transmission:0.85,
+    thickness:0.3, metalness:0
+  });
+  const jarBody = new THREE.Mesh(new THREE.CylinderGeometry(0.11,0.1,0.22,20), glassMat);
+  jarBody.position.y=0.11;
+  group.add(jarBody);
+  const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.115,0.115,0.035,20),
+    new THREE.MeshStandardMaterial({color:0x8B5E3C, roughness:0.7}));
+  lid.position.y=0.235;
+  group.add(lid);
+
+  // folded notes inside
+  for(let i=0;i<4;i++){
+    const note = new THREE.Mesh(new THREE.BoxGeometry(0.05,0.03,0.05),
+      new THREE.MeshStandardMaterial({color:0xFBF6EC, roughness:0.9}));
+    note.position.set((Math.random()-0.5)*0.08, 0.03+i*0.035, (Math.random()-0.5)*0.08);
+    note.rotation.y = Math.random()*Math.PI;
+    group.add(note);
+  }
+  group.position.set(0.75,0.45,-0.05);
+  scene.add(group);
+  group.userData.baseY = group.position.y;
+  group.userData.baseRotZ = 0;
+  interactables.jar = { group, hit: jarBody, focus:{
+    pos:new THREE.Vector3(0.15,0.62,0.55), look:new THREE.Vector3(0.75,0.55,-0.05)
+  }};
+}
+
+/* ---------------- photo frame ---------------- */
+function buildFrame(){
+  const loader = new THREE.TextureLoader();
+  const photoPath = (CONTENT.photos && CONTENT.photos[0] && CONTENT.photos[0].src) || 'photos/2026-07-02.jpg';
+  const tex = loader.load(photoPath);
+  tex.encoding = THREE.sRGBEncoding;
+
+  const group = new THREE.Group();
+  const frameMat = new THREE.MeshStandardMaterial({color:0xF5EFE3, roughness:0.6});
+  const outer = new THREE.Mesh(new THREE.BoxGeometry(0.62,0.78,0.04), frameMat);
+  group.add(outer);
+  const photo = new THREE.Mesh(new THREE.PlaneGeometry(0.52,0.68), new THREE.MeshStandardMaterial({map:tex, roughness:0.5}));
+  photo.position.z = 0.021;
+  group.add(photo);
+  const glass = new THREE.Mesh(new THREE.PlaneGeometry(0.55,0.71), new THREE.MeshPhysicalMaterial({
+    color:0xffffff, transparent:true, opacity:0.12, roughness:0.05, transmission:0.6
+  }));
+  glass.position.z = 0.023;
+  group.add(glass);
+
+  group.position.set(-1.55,1.95,-2.9);
+  group.rotation.y = 0.03;
+  scene.add(group);
+
+  interactables.frame = { group, hit: outer, baseZ:group.position.z, focus:{
+    pos:new THREE.Vector3(-1.15,1.95,-1.4), look:new THREE.Vector3(-1.55,1.95,-2.9)
+  }};
+}
+
+/* ---------------- mug ---------------- */
+function buildMug(){
+  const group = new THREE.Group();
+  const mugMat = new THREE.MeshStandardMaterial({color:0xFBF6EC, roughness:0.4});
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.055,0.09,20), mugMat);
+  body.position.y=0.045;
+  group.add(body);
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(0.03,0.009,8,16,Math.PI*1.3),
+    mugMat);
+  handle.position.set(0.07,0.045,0);
+  handle.rotation.z = Math.PI/2.4;
+  group.add(handle);
+
+  // steam particles
+  const steamGeo = new THREE.BufferGeometry();
+  const steamPos=[]; for(let i=0;i<12;i++) steamPos.push((Math.random()-0.5)*0.02,0.09+Math.random()*0.05,(Math.random()-0.5)*0.02);
+  steamGeo.setAttribute('position', new THREE.Float32BufferAttribute(steamPos,3));
+  const steamMat = new THREE.PointsMaterial({color:0xffffff, size:0.025, transparent:true, opacity:0.35});
+  const steam = new THREE.Points(steamGeo, steamMat);
+  group.add(steam);
+  mugSteam = { points:steam, geo:steamGeo };
+
+  group.position.set(0.65,0.455,-0.05);
+  scene.add(group);
+  interactables.mug = { group, hit: body, focus:{
+    pos:new THREE.Vector3(0.35,0.62,0.35), look:new THREE.Vector3(0.65,0.5,-0.05)
+  }};
+}
+
+/* ---------------- plant (grows over days) ---------------- */
+function buildPlant(){
+  plantGroup = new THREE.Group();
+  const pot = new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.11,0.18,16),
+    new THREE.MeshStandardMaterial({color:0xC98B62, roughness:0.85}));
+  pot.position.y=0.09; pot.castShadow=true;
+  plantGroup.add(pot);
+
+  const day = CONTENT.dayCount || 1;
+  const stage = Math.min(4, Math.floor(day/25)); // 0..4
+  const leafMat = new THREE.MeshStandardMaterial({color:0x6B7A5E, roughness:0.8, side:THREE.DoubleSide});
+  const stemMat = new THREE.MeshStandardMaterial({color:0x4f5c40, roughness:0.9});
+
+  if(stage===0){
+    const sprout = new THREE.Mesh(new THREE.ConeGeometry(0.03,0.14,8), leafMat);
+    sprout.position.y=0.25; plantGroup.add(sprout);
+  } else {
+    const leafCount = 3+stage*3;
+    for(let i=0;i<leafCount;i++){
+      const h = 0.18+Math.random()*0.15*stage*0.4+0.15;
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.006,0.008,h,6), stemMat);
+      const ang = (i/leafCount)*Math.PI*2;
+      stem.position.set(Math.cos(ang)*0.03, 0.18+h/2, Math.sin(ang)*0.03);
+      stem.rotation.z = Math.sin(ang)*0.25;
+      plantGroup.add(stem);
+      const leaf = new THREE.Mesh(new THREE.SphereGeometry(0.045+stage*0.008,8,8), leafMat);
+      leaf.scale.set(1,1.6,0.4);
+      leaf.position.set(Math.cos(ang)*0.03, 0.18+h, Math.sin(ang)*0.03);
+      leaf.rotation.z = ang;
+      plantGroup.add(leaf);
+      if(stage>=3){
+        const flower = new THREE.Mesh(new THREE.SphereGeometry(0.018,8,8),
+          new THREE.MeshStandardMaterial({color:0xE7C7B8, emissive:0xE7C7B8, emissiveIntensity:0.15}));
+        flower.position.copy(leaf.position); flower.position.y += 0.03;
+        if(Math.random()>0.4) plantGroup.add(flower);
+      }
+    }
+  }
+  if(stage>=4){
+    for(let i=0;i<2;i++){
+      const wing = new THREE.Mesh(new THREE.CircleGeometry(0.03,8),
+        new THREE.MeshStandardMaterial({color:0xD9A441, side:THREE.DoubleSide, transparent:true, opacity:0.85}));
+      wing.position.set(0.1+Math.random()*0.1, 0.4+Math.random()*0.15, 0.05);
+      plantGroup.add(wing);
+    }
+  }
+
+  plantGroup.position.set(1.65,0,-2.6);
+  scene.add(plantGroup);
+}
+
+/* ---------------- clock object ---------------- */
+let clockHourHand, clockMinHand;
+function buildClockObject(){
+  const group = new THREE.Group();
+  const face = new THREE.Mesh(new THREE.CircleGeometry(0.16,32),
+    new THREE.MeshStandardMaterial({color:0xFBF6EC, roughness:0.6}));
+  group.add(face);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.16,0.012,8,32),
+    new THREE.MeshStandardMaterial({color:0x3a2417, roughness:0.5}));
+  group.add(rim);
+  clockHourHand = new THREE.Mesh(new THREE.BoxGeometry(0.012,0.075,0.005), new THREE.MeshStandardMaterial({color:0x241F1B}));
+  clockHourHand.position.y = 0.035; clockHourHand.geometry.translate(0,0.035,0);
+  group.add(clockHourHand);
+  clockMinHand = new THREE.Mesh(new THREE.BoxGeometry(0.009,0.11,0.005), new THREE.MeshStandardMaterial({color:0x241F1B}));
+  clockMinHand.geometry.translate(0,0.05,0);
+  group.add(clockMinHand);
+
+  group.position.set(-2.3,2.8,-2.95);
+  scene.add(group);
+}
+
+function tickClock(){
+  const now = new Date();
+  const h = now.getHours()%12, m = now.getMinutes();
+  if(clockHourHand) clockHourHand.rotation.z = -( (h+m/60)/12 ) * Math.PI*2;
+  if(clockMinHand) clockMinHand.rotation.z = -(m/60) * Math.PI*2;
+  document.getElementById('clockText').textContent =
+    now.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('dateText').textContent =
+    now.toLocaleDateString('en-IN',{weekday:'short', day:'numeric', month:'short'});
+  drawSky();
+}
+
+/* ---------------- weather ---------------- */
+async function fetchWeather(){
+  const loc = (CONTENT.location) || {lat:19.1867, lon:73.1937, label:"Ambernath"};
+  try{
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${loc.lat}&longitude=${loc.lon}&current=temperature_2m,weathercode,is_day&timezone=Asia%2FKolkata`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const code = data.current.weathercode;
+    const temp = data.current.temperature_2m;
+    weatherCat = classifyWeather(code, temp);
+    document.getElementById('weatherChip').textContent = `${loc.label} · ${Math.round(temp)}°C`;
+  }catch(e){
+    weatherCat = 'sunny';
+    document.getElementById('weatherChip').textContent = loc.label || '';
+  }
+  drawSky();
+  applyWeatherFX();
+  writeStickyNote();
+}
+function classifyWeather(code, temp){
+  if([95,96,99].includes(code)) return 'thunderstorm';
+  if([61,63,65,80,81,82,51,53,55,56,57,66,67].includes(code)) return 'rain';
+  if([45,48].includes(code)) return 'fog';
+  if([1,2,3].includes(code)) return 'cloudy';
+  if(temp!=null && temp>=33) return 'hot';
+  if(temp!=null && temp<=18) return 'cold';
+  return 'sunny';
+}
+function applyWeatherFX(){
+  rainDrops.material.opacity = (weatherCat==='rain'||weatherCat==='thunderstorm') ? 0.75 : 0;
+}
+function writeStickyNote(){
+  const msgs = CONTENT.weatherMessages || {};
+  const hour = new Date().getHours();
+  let key = weatherCat;
+  if(hour<6 || hour>=19) key='night';
+  const text = msgs[key] || msgs[weatherCat] || "Hope today treats you gently ❤️";
+  const emojis = {rain:'☔',thunderstorm:'⛈️',hot:'☀️',sunny:'🌤️',cloudy:'☁️',cold:'🧣',night:'🌙',fog:'🌫️'};
+  const el = document.getElementById('stickyNote');
+  el.innerHTML = `<span class="emo">${emojis[key]||'💌'}</span><span class="title">Niyu Weather Update</span>${text}`;
+}
+function positionStickyNote(){
+  const el = document.getElementById('stickyNote');
+  // place near window, offset to bottom-right of it, projected to screen once during idle
+  const vec = new THREE.Vector3(1.35,0.75,-2.9);
+  const projected = vec.clone().project(camera);
+  const x = (projected.x*0.5+0.5)*innerWidth;
+  const y = (1-(projected.y*0.5+0.5))*innerHeight;
+  el.style.left = Math.min(innerWidth-166, Math.max(10,x)) + 'px';
+  el.style.top = Math.min(innerHeight-140, Math.max(10,y)) + 'px';
+}
+
+/* ---------------- panel content ---------------- */
+function openPanel(key){
+  const inner = document.getElementById('panelInner');
+  if(key==='jar'){
+    inner.innerHTML = `
+      <p class="panelEyebrow">${CONTENT.jarHint || 'Shake the jar for your morning note'}</p>
+      <h2 class="panelTitle">${(CONTENT.note&&CONTENT.note.title)||'Morning note'}</h2>
+      <p class="panelBody">${(CONTENT.note&&CONTENT.note.body)||''}</p>`;
+  } else if(key==='frame'){
+    const p = (CONTENT.photos && CONTENT.photos[0]) || {src:'assets/today-photo.jpg', caption:''};
+    inner.innerHTML = `
+      <p class="panelEyebrow">a little memory</p>
+      <img class="panelImg" src="${p.src}" alt="today" />
+      <p class="panelCaption">${p.caption||''}</p>`;
+  } else if(key==='mug'){
+    inner.innerHTML = `
+      <p class="panelEyebrow" style="text-align:center">still counting</p>
+      <div class="dayBig">Day ${CONTENT.dayCount||1}</div>
+      <div class="dayLabel">of us, and counting ❤️</div>`;
+  }
+  document.getElementById('panel').classList.add('show');
+}
+function closePanel(){
+  document.getElementById('panel').classList.remove('show');
+  goIdle();
+}
+
+/* ---------------- pointer / camera focus ---------------- */
+function onPointerDown(e){
+  drag.active = true; drag.sx = e.clientX; drag.sy = e.clientY;
+  drag.startYaw = drag.curYaw; drag.startPitch = drag.curPitch;
+}
+function onPointerMove(e){
+  if(!drag.active || cameraState.mode!=='idle') return;
+  const dx = (e.clientX-drag.sx)/innerWidth;
+  const dy = (e.clientY-drag.sy)/innerHeight;
+  drag.curYaw = THREE.MathUtils.clamp(drag.startYaw - dx*0.6, -0.35, 0.35);
+  drag.curPitch = THREE.MathUtils.clamp(drag.startPitch - dy*0.4, -0.18, 0.18);
+}
+function onPointerUp(e){
+  const moved = Math.hypot(e.clientX-drag.sx, e.clientY-drag.sy);
+  drag.active = false;
+  if(moved < 6){ handleTap(e); }
+}
+function handleTap(e){
+  if(cameraState.mode!=='idle') return;
+  pointer.x = (e.clientX/innerWidth)*2-1;
+  pointer.y = -(e.clientY/innerHeight)*2+1;
+  raycaster.setFromCamera(pointer, camera);
+  const meshes = Object.entries(interactables).map(([k,v])=>v.hit);
+  const hits = raycaster.intersectObjects(meshes, false);
+  if(hits.length){
+    const hitMesh = hits[0].object;
+    const key = Object.keys(interactables).find(k=>interactables[k].hit===hitMesh);
+    if(key) focusOn(key);
+  }
+}
+function focusOn(key){
+  const target = interactables[key];
+  cameraState.mode = 'focus';
+  cameraState.t = 0; cameraState.dur = 1.1;
+  cameraState.from = camera.position.clone();
+  cameraState.to = target.focus.pos.clone();
+  cameraState.lookFrom = idleTarget.clone();
+  cameraState.lookTo = target.focus.look.clone();
+  cameraState.focusKey = key;
+  if(key==='jar') triggerJarShake();
+  setTimeout(()=>openPanel(key), 900);
+}
+function goIdle(){
+  cameraState.mode = 'toIdle';
+  cameraState.t = 0; cameraState.dur = 1.0;
+  cameraState.from = camera.position.clone();
+  cameraState.to = idleBase.clone();
+  cameraState.lookFrom = interactables[cameraState.focusKey] ? interactables[cameraState.focusKey].focus.look.clone() : idleTarget.clone();
+  cameraState.lookTo = idleTarget.clone();
+}
+let jarShakeT = -1;
+function triggerJarShake(){ jarShakeT = 0; }
+
+/* ---------------- animation loop ---------------- */
+function ease(t){ return 1-Math.pow(1-t,3); }
+
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = clock3d.getDelta();
+  const elapsed = clock3d.elapsedTime;
+
+  // camera state machine
+  if(cameraState.mode==='intro' || cameraState.mode==='focus' || cameraState.mode==='toIdle'){
+    cameraState.t += dt;
+    const p = Math.min(1, cameraState.t/cameraState.dur);
+    const e = ease(p);
+    camera.position.lerpVectors(cameraState.from, cameraState.to, e);
+    const look = new THREE.Vector3().lerpVectors(cameraState.lookFrom, cameraState.lookTo, e);
+    camera.lookAt(look);
+    if(p>=1){
+      if(cameraState.mode==='intro' || cameraState.mode==='toIdle') cameraState.mode='idle';
+      else if(cameraState.mode==='focus') cameraState.mode='focused';
+    }
+  } else if(cameraState.mode==='idle'){
+    drag.curYaw += (0-drag.curYaw)*0; // no auto-recenter, user controls
+    const yaw = drag.curYaw, pitch = drag.curPitch;
+    const r = idleBase.clone();
+    camera.position.set(
+      idleBase.x + Math.sin(yaw)*1.2,
+      idleBase.y + pitch*1.5,
+      idleBase.z - (1-Math.cos(yaw))*0.6
+    );
+    camera.lookAt(idleTarget.x+Math.sin(yaw)*0.4, idleTarget.y+pitch*0.6, idleTarget.z);
+  }
+  // focused mode: hold still, subtle breathing
+  if(cameraState.mode==='focused'){
+    camera.position.y += Math.sin(elapsed*0.6)*0.0006;
+  }
+
+  // curtains sway
+  curtains.forEach(c=>{
+    const pos = c.geo.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      const ox = pos.getX(i), oy = pos.getY(i);
+      const sway = Math.sin(elapsed*0.6 + oy*2 + c.seed)*0.03*((oy+1.4)/2.8);
+      pos.setZ(i, sway);
+    }
+    pos.needsUpdate = true;
+  });
+
+  // lamp glow at night
+  if(window._lampShade){
+    const targetI = isDay ? 0 : 1.1;
+    window._lampShade.material.emissiveIntensity += (targetI - window._lampShade.material.emissiveIntensity)*0.02;
+    lampLight.intensity += ((isDay?0:1.4) - lampLight.intensity)*0.02;
+  }
+
+  // mug steam drift
+  if(mugSteam.points){
+    const pos = mugSteam.geo.attributes.position;
+    for(let i=0;i<pos.count;i++){
+      let y = pos.getY(i) + dt*0.06;
+      if(y>0.22) y=0.09;
+      pos.setY(i,y);
+    }
+    pos.needsUpdate = true;
+  }
+
+  // jar shake
+  if(jarShakeT>=0 && interactables.jar){
+    jarShakeT += dt;
+    const g = interactables.jar.group;
+    if(jarShakeT<0.6){
+      g.rotation.z = Math.sin(jarShakeT*40)*0.06*(1-jarShakeT/0.6);
+      g.position.y = g.userData.baseY + Math.abs(Math.sin(jarShakeT*30))*0.01;
+    } else {
+      g.rotation.z = 0; g.position.y = g.userData.baseY; jarShakeT=-1;
+    }
+  }
+
+  // sun/moon subtle bob + star twinkle
+  if(sunMoon){
+    sunMoon.material.color.set(isDay? 0xFFE9A8 : 0xE9EEFF);
+    stars.material.opacity += ((isDay?0:0.85) - stars.material.opacity)*0.02;
+  }
+  if(rainDrops.geometry){
+    const pos = rainDrops.geometry.attributes.position;
+    if(rainDrops.material.opacity>0.05){
+      for(let i=0;i<pos.count;i++){
+        let y = pos.getY(i) - dt*2.4;
+        if(y<-1.25) y=1.25;
+        pos.setY(i,y);
+      }
+      pos.needsUpdate = true;
+    }
+  }
+
+  renderer.render(scene, camera);
+}
 </script>
-<script src="app.js"></script>
 </body>
 </html>
