@@ -14,23 +14,26 @@
     --gold:#D9A441;
     --blush:#F0C9C0;
     --mauve:#B98CA5;
-    --paper:#FBF5F1;
+    --paper:#FFFDFB;
 
     --sky-top:#FCEEDD;
-    --sky-bottom:#F6C9B8;
+    --sky-mid:#F6C9B8;
+    --sky-bottom:#F3E4DC;
     --sun-color:#E3A64B;
     --text-on-sky:#3B2A35;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
-  html{scroll-behavior:smooth;}
-  html,body{margin:0;padding:0;}
+  html,body{margin:0;padding:0; height:100%;}
   body{
     font-family:'Work Sans', sans-serif;
     color:var(--ink);
-    background:var(--paper);
     overflow-x:hidden;
+    min-height:100dvh;
+    background: linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+    transition: background 1.8s ease;
   }
 
+  /* ================= PASSWORD GATE ================= */
   #gate{
     position:fixed; inset:0; z-index:50;
     background:var(--paper);
@@ -57,190 +60,143 @@
   #gateError{ font-size:0.85rem; color:#b5546b; height:16px; opacity:0; transition: opacity 0.2s ease; }
   #gateError.show{ opacity:1; }
 
-  #app{ opacity:0; transition: opacity 0.9s ease; }
+  #app{ opacity:0; transition: opacity 0.9s ease; position:relative; min-height:100dvh; }
   #app.visible{ opacity:1; }
 
-  .hero{
-    position:relative;
-    min-height:100svh;
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-    color: var(--text-on-sky);
-    overflow:hidden;
-    transition: background 1.8s ease, color 1.8s ease;
-    padding: 40px 24px 80px;
-    text-align:center;
-  }
-
-  .stars{ position:absolute; inset:0; opacity:0; transition:opacity 1.5s ease; pointer-events:none; }
-  .star{
-    position:absolute; width:2px; height:2px; background:#fff; border-radius:50%;
-    animation: twinkle 3s ease-in-out infinite;
-  }
+  /* ================= AMBIENT SKY LAYERS ================= */
+  .sky-layer{ position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .stars{ position:absolute; inset:0; opacity:0; transition:opacity 1.5s ease; }
+  .star{ position:absolute; width:2px; height:2px; background:#fff; border-radius:50%; animation: twinkle 3s ease-in-out infinite; }
   @keyframes twinkle{ 0%,100%{opacity:0.2;} 50%{opacity:1;} }
 
-  .cloud{
-    position:absolute; background: rgba(255,255,255,0.6);
-    border-radius:50%; filter: blur(9px); animation: drift linear infinite;
-    transition: opacity 1s ease;
-  }
+  .cloud{ position:absolute; background: rgba(255,255,255,0.6); border-radius:50%; filter: blur(9px); animation: drift linear infinite; }
   @keyframes drift{ from{ transform: translateX(-15vw); } to{ transform: translateX(115vw); } }
 
-  .rain{ position:absolute; inset:0; opacity:0; transition:opacity 1s ease; pointer-events:none; }
-  .drop{
-    position:absolute; width:2px; height:16px; top:-20px;
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.55));
-    animation: fall linear infinite;
-  }
+  .rain{ position:absolute; inset:0; opacity:0; transition:opacity 1s ease; }
+  .drop{ position:absolute; width:2px; height:16px; top:-20px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.55)); animation: fall linear infinite; }
   @keyframes fall{ to{ transform: translateY(120vh); } }
 
   .sun{
-    position:absolute; width:120px; height:120px; border-radius:50%;
-    background: var(--sun-color);
+    position:absolute; width:110px; height:110px; border-radius:50%;
+    background: var(--sun-color); left:14%;
     box-shadow: 0 0 60px 10px color-mix(in srgb, var(--sun-color) 55%, transparent);
-    transition: background 1.8s ease, opacity 1.5s ease, transform 2s ease;
-    z-index:0;
+    transition: background 1.8s ease, opacity 1.5s ease, top 2s ease;
   }
 
-  .hero-content{ position:relative; z-index:2; }
-  .eyebrow{ font-size:0.7rem; letter-spacing:3px; text-transform:uppercase; opacity:0.75; margin-bottom:14px; }
-  h1{
-    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
-    font-size:2.7rem; line-height:1.12; margin:0 0 8px;
-  }
-  h1 .script{
-    font-family:'Caveat', cursive; font-weight:700; color:var(--gold);
-    font-size:1.2em; margin-left:8px; display:inline-block;
-  }
-  .date{ font-size:0.9rem; opacity:0.85; margin-bottom:18px; }
-  .chips{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:6px; }
-  .chip{
-    display:inline-flex; align-items:center; gap:8px;
-    background: rgba(255,255,255,0.35); backdrop-filter: blur(6px);
-    border:1px solid rgba(255,255,255,0.5); padding:8px 16px; border-radius:999px;
-    font-size:0.78rem; letter-spacing:0.3px;
-  }
-  .scroll-cue{
-    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
-    z-index:2; font-size:0.7rem; letter-spacing:2px; text-transform:uppercase;
-    opacity:0.7; display:flex; flex-direction:column; align-items:center; gap:6px;
-  }
-  .scroll-cue span{ width:1px; height:26px; background: currentColor; animation: pulse-down 1.8s ease-in-out infinite; }
-  @keyframes pulse-down{ 0%,100%{ opacity:0.2; } 50%{ opacity:0.9; } }
-
-  .letter-section{
-    position:relative;
-    min-height:100vh;
-    background:
-      radial-gradient(ellipse 70% 40% at 50% 0%, rgba(240,201,192,0.35), transparent 65%),
-      var(--paper);
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
-    padding: 20vh 24px 90px; text-align:center;
-  }
-  .flourish{
-    display:flex; align-items:center; gap:12px; margin-bottom:34px; color:var(--mauve); opacity:0.8;
-  }
-  .flourish::before, .flourish::after{
-    content:''; width:38px; height:1px; background: var(--blush);
-  }
-  .flourish svg{ width:16px; height:16px; }
-
-  .letter-hint{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--mauve); margin-bottom:26px; }
-
-  .floating-hearts{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
-  .fheart{
-    position:absolute; bottom:-40px; opacity:0; color: var(--mauve);
-    animation: floatUp linear infinite;
-  }
+  .fheart{ position:absolute; bottom:-40px; opacity:0; color: var(--mauve); animation: floatUp linear infinite; }
   @keyframes floatUp{
     0%{ transform: translateY(0) translateX(0) rotate(0deg); opacity:0; }
-    10%{ opacity:0.35; }
-    90%{ opacity:0.25; }
-    100%{ transform: translateY(-70vh) translateX(var(--drift,20px)) rotate(20deg); opacity:0; }
+    12%{ opacity:0.3; }
+    88%{ opacity:0.22; }
+    100%{ transform: translateY(-100vh) translateX(var(--drift,20px)) rotate(20deg); opacity:0; }
   }
 
-  #envelope{ width:180px; height:130px; cursor:pointer; position:relative; margin-bottom:10px; transition: transform 0.4s ease; }
-  #envelope:active{ transform: scale(0.97); }
-  #envelope.open{ transform: scale(0.92) translateY(-6px); }
-  .env-body{
+  /* ================= PAGE CONTENT ================= */
+  .page{
+    position:relative; z-index:2;
+    min-height:100dvh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 48px 22px 40px;
+    color: var(--text-on-sky);
+    transition: color 1.8s ease;
+  }
+
+  .eyebrow{ font-size:0.68rem; letter-spacing:3px; text-transform:uppercase; opacity:0.75; margin-bottom:12px; }
+  h1{
+    font-family:'Fraunces', serif; font-weight:500; font-optical-sizing:auto;
+    font-size:2.3rem; line-height:1.12; margin:0 0 6px; text-align:center;
+  }
+  h1 .script{ font-family:'Caveat', cursive; font-weight:700; color:var(--gold); font-size:1.2em; margin-left:6px; display:inline-block; }
+  .date{ font-size:0.85rem; opacity:0.85; margin-bottom:14px; text-align:center; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-bottom:30px; }
+  .chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background: rgba(255,255,255,0.4); backdrop-filter: blur(6px);
+    border:1px solid rgba(255,255,255,0.55); padding:7px 14px; border-radius:999px;
+    font-size:0.74rem; letter-spacing:0.3px;
+  }
+
+  /* ================= FLIP LOCKET ================= */
+  .flip-container{
+    perspective: 1400px;
+    width: min(320px, 84vw);
+    height: min(430px, 60vh);
+    min-height:340px;
+  }
+  .flip-card{
+    position:relative; width:100%; height:100%;
+    transform-style: preserve-3d;
+    transition: transform 1s cubic-bezier(.45,.05,.15,1);
+    cursor:pointer;
+  }
+  .flip-card.flipped{ transform: rotateY(180deg); cursor:default; }
+
+  .face{
     position:absolute; inset:0;
-    background: linear-gradient(135deg, #fff 0%, var(--blush) 140%);
-    border-radius:8px; box-shadow: 0 16px 34px rgba(59,42,53,0.18);
-  }
-  .env-flap{
-    position:absolute; top:0; left:0; right:0; height:70px;
-    background: linear-gradient(135deg, var(--blush), var(--mauve));
-    clip-path: polygon(0 0, 100% 0, 50% 68%);
-    border-radius:8px 8px 0 0; transform-origin: top;
-    transition: transform 0.6s cubic-bezier(.4,0,.2,1); z-index:2;
-  }
-  .env-seal{
-    position:absolute; top:34px; left:50%; transform:translate(-50%,0);
-    width:36px; height:36px;
-    z-index:3; transition: opacity 0.3s ease;
-    animation: sealPulse 2.4s ease-in-out infinite;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
-  }
-  .env-seal svg{ width:100%; height:100%; }
-  @keyframes sealPulse{ 0%,100%{ transform:translate(-50%,0) scale(1); } 50%{ transform:translate(-50%,0) scale(1.08); } }
-  #envelope.open .env-flap{ transform: rotateX(180deg); }
-  #envelope.open .env-seal{ opacity:0; }
-  #envelope.open{ pointer-events:none; }
-  .tap-label{
-    font-size:0.78rem; letter-spacing:1.5px; text-transform:uppercase; color: var(--ink-soft);
-    margin-top:14px; transition: opacity 0.3s ease;
+    -webkit-backface-visibility:hidden; backface-visibility:hidden;
+    border-radius:22px;
+    box-shadow: 0 24px 60px rgba(59,42,53,0.22);
   }
 
-  .letter-paper{
-    max-width:460px; width:100%; background:#fff;
-    border-radius:14px; box-shadow: 0 20px 50px rgba(59,42,53,0.14);
-    padding: 0 30px; text-align:center;
-    max-height:0; opacity:0; overflow:hidden;
-    transform: translateY(-30px) scale(0.8);
-    transition:
-      max-height 0.75s cubic-bezier(.16,1,.3,1),
-      padding 0.75s cubic-bezier(.16,1,.3,1),
-      opacity 0.5s ease 0.15s,
-      transform 0.65s cubic-bezier(.34,1.56,.64,1) 0.08s,
-      margin-top 0.75s cubic-bezier(.16,1,.3,1);
-    margin-top:0;
+  .face-front{
+    background: linear-gradient(160deg, rgba(255,255,255,0.85), rgba(255,255,255,0.55));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.7);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px; padding:24px; text-align:center;
   }
-  .letter-paper.show{
-    max-height:1400px; opacity:1; transform: translateY(0) scale(1);
-    padding: 38px 30px; margin-top:30px;
+  .locket{
+    width:84px; height:84px; position:relative;
+    animation: lockPulse 2.6s ease-in-out infinite;
   }
-  .memory-title{ font-family:'Caveat', cursive; font-size:1.9rem; color:var(--mauve); margin:0 0 14px; }
-  .photos{ display:flex; flex-wrap:wrap; justify-content:center; gap:14px; margin:8px 0 26px; }
+  .locket svg{ width:100%; height:100%; filter: drop-shadow(0 6px 14px rgba(217,164,65,0.4)); }
+  @keyframes lockPulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.07); } }
+  .front-label{ font-family:'Caveat', cursive; font-size:1.5rem; color: var(--mauve); }
+  .front-sub{ font-size:0.7rem; letter-spacing:2px; text-transform:uppercase; color:var(--ink-soft); }
+
+  .face-back{
+    background:#fff;
+    transform: rotateY(180deg);
+    padding: 30px 26px;
+    overflow-y:auto;
+    display:flex; flex-direction:column;
+    -webkit-overflow-scrolling:touch;
+  }
+  .memory-title{ font-family:'Caveat', cursive; font-size:1.7rem; color:var(--mauve); margin:0 0 12px; text-align:center; }
+  .photos{ display:flex; gap:12px; overflow-x:auto; padding:4px 4px 14px; margin-bottom:6px; scroll-snap-type:x proximity; }
   .photo-card{
-    background:#fff; padding:8px 8px 18px; border-radius:6px;
-    box-shadow: 0 10px 26px rgba(59,42,53,0.14);
-    transform: rotate(var(--r, -2deg)); cursor:pointer; transition: transform 0.25s ease;
+    flex:0 0 auto; background:#fff; padding:7px 7px 16px; border-radius:6px;
+    box-shadow: 0 8px 20px rgba(59,42,53,0.16); scroll-snap-align:center; cursor:pointer;
+    transform: rotate(var(--r,-1.5deg));
   }
-  .photo-card:hover{ transform: rotate(0deg) scale(1.04); }
-  .photo-card:nth-child(even){ --r: 2deg; }
-  .photo-card:nth-child(3n){ --r: -1.2deg; }
-  .photo-card img{ display:block; width:150px; height:180px; object-fit:cover; border-radius:2px; }
+  .photo-card:nth-child(even){ --r:1.5deg; }
+  .photo-card img{ display:block; width:130px; height:150px; object-fit:cover; border-radius:2px; }
 
-  .message{ font-family:'Fraunces', serif; font-weight:400; font-size:1.12rem; line-height:1.7; color:var(--ink); white-space:pre-wrap; }
-  .signoff{ font-family:'Caveat', cursive; font-size:1.3rem; color:var(--ink-soft); margin-top:22px; margin-bottom: 4px;}
+  .message{
+    font-family:'Fraunces', serif; font-weight:400; font-size:1.05rem; line-height:1.65;
+    color:var(--ink); white-space:pre-wrap; text-align:center; margin:auto 0;
+  }
+  .signoff{ font-family:'Caveat', cursive; font-size:1.2rem; color:var(--ink-soft); margin-top:18px; text-align:center; }
+  .close-hint{
+    font-size:0.66rem; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft);
+    opacity:0.55; text-align:center; margin-top:14px;
+  }
 
   #lightbox{
-    position:fixed; inset:0; background:rgba(20,12,18,0.88);
+    position:fixed; inset:0; background:rgba(20,12,18,0.9);
     display:none; align-items:center; justify-content:center; z-index:60; padding:20px;
   }
   #lightbox.show{ display:flex; }
   #lightbox img{ max-width:100%; max-height:85vh; border-radius:6px; box-shadow:0 20px 50px rgba(0,0,0,0.5); }
 
   footer{
-    text-align:center; padding: 30px 24px 50px;
-    font-size:0.68rem; letter-spacing:1px; color:var(--ink-soft);
+    position:relative; z-index:2;
+    text-align:center; padding: 6px 24px 34px;
+    font-size:0.65rem; letter-spacing:1px; color: var(--text-on-sky);
     opacity:0.55; text-transform:uppercase;
   }
 
-  @media (max-width:400px){
-    h1{ font-size:2.2rem; }
-    .message{ font-size:1.02rem; }
-  }
+  @media (max-width:360px){ h1{ font-size:2rem; } }
 </style>
 </head>
 <body>
@@ -253,53 +209,45 @@
 </div>
 
 <div id="app">
-
-  <section class="hero" id="hero">
+  <div class="sky-layer">
     <div class="stars" id="stars"></div>
     <div class="rain" id="rain"></div>
     <div class="sun" id="sun"></div>
-    <div class="floating-hearts" id="heroHearts"></div>
-    <div class="hero-content">
-      <div class="eyebrow">for niyu</div>
-      <h1>Good morning<span class="script">Niyu</span></h1>
-      <div class="date" id="dateLabel"></div>
-      <div class="chips">
-        <div class="chip" id="dayChip"></div>
-        <div class="chip" id="weatherChip" style="display:none;"></div>
-      </div>
-    </div>
-    <div class="scroll-cue"><span></span>scroll</div>
-  </section>
+    <div id="hearts"></div>
+  </div>
 
-  <section class="letter-section">
-    <div class="floating-hearts" id="letterHearts"></div>
-    <div style="position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; width:100%;">
-      <div class="flourish">
-        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="currentColor"/></svg>
-      </div>
-      <div class="letter-hint">you've got something today</div>
-      <div id="envelope" style="position:relative;">
-        <div class="env-body"></div>
-        <div class="env-flap"></div>
-        <div class="env-seal">
-          <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="var(--gold)"/>
-            <text x="16" y="15" font-family="Caveat, cursive" font-weight="700" font-size="11" fill="#fff" text-anchor="middle">N</text>
-          </svg>
+  <div class="page">
+    <div class="eyebrow">for niyu</div>
+    <h1>Good morning<span class="script">Niyu</span></h1>
+    <div class="date" id="dateLabel"></div>
+    <div class="chips">
+      <div class="chip" id="dayChip"></div>
+      <div class="chip" id="weatherChip" style="display:none;"></div>
+    </div>
+
+    <div class="flip-container">
+      <div class="flip-card" id="flipCard">
+        <div class="face face-front">
+          <div class="locket">
+            <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="var(--gold)"/>
+            </svg>
+          </div>
+          <div class="front-label">you've got something today</div>
+          <div class="front-sub">tap to open</div>
+        </div>
+        <div class="face face-back">
+          <div id="memoryBlock" style="display:none;">
+            <div class="memory-title" id="memoryTitle"></div>
+            <div class="photos" id="photos"></div>
+          </div>
+          <div class="message" id="messageText">loading...</div>
+          <div class="signoff" id="signoff"></div>
+          <div class="close-hint">tap to close</div>
         </div>
       </div>
-      <div class="tap-label" id="tapLabel">tap to open</div>
-
-      <div class="letter-paper" id="letterPaper">
-        <div id="memoryBlock" style="display:none;">
-          <div class="memory-title" id="memoryTitle"></div>
-          <div class="photos" id="photos"></div>
-        </div>
-        <div class="message" id="messageText">loading...</div>
-        <div class="signoff" id="signoff"></div>
-      </div>
     </div>
-  </section>
+  </div>
 
   <footer>made every morning, for you</footer>
 </div>
@@ -346,65 +294,79 @@
   const hour = now.getHours() + now.getMinutes()/60;
   const isNight = (hour < 5 || hour >= 19);
 
-  const root = document.documentElement.style;
+  const body = document.body;
   const starsEl = document.getElementById('stars');
   const rainEl = document.getElementById('rain');
   const sunEl = document.getElementById('sun');
-  const hero = document.getElementById('hero');
+  const heartsEl = document.getElementById('hearts');
 
-  function setSky(top, bottom, sun, text, showStars, sunTop, sunOpacity){
-    root.setProperty('--sky-top', top);
-    root.setProperty('--sky-bottom', bottom);
-    root.setProperty('--sun-color', sun);
-    root.setProperty('--text-on-sky', text);
+  function setSky(top, mid, bottom, sun, text, showStars, sunTop, sunOpacity){
+    document.documentElement.style.setProperty('--sky-top', top);
+    document.documentElement.style.setProperty('--sky-mid', mid);
+    document.documentElement.style.setProperty('--sky-bottom', bottom);
+    document.documentElement.style.setProperty('--sun-color', sun);
+    document.documentElement.style.setProperty('--text-on-sky', text);
     starsEl.style.opacity = showStars ? '1' : '0';
     sunEl.style.top = sunTop + '%';
     sunEl.style.opacity = sunOpacity;
   }
 
-  // base time-of-day palette
   let base;
-  if(hour >= 5 && hour < 8) base = {top:'#FCEEDD',bottom:'#F6C9B8',sun:'#E3A64B',text:'#3B2A35',stars:false,sunTop:62,sunOp:1};
-  else if(hour >= 8 && hour < 16) base = {top:'#DCEBF2',bottom:'#FBF6F0',sun:'#F2C868',text:'#3B2A35',stars:false,sunTop:12,sunOp:1};
-  else if(hour >= 16 && hour < 19) base = {top:'#E9D6E8',bottom:'#F0B39B',sun:'#E08A5B',text:'#3B2A35',stars:false,sunTop:55,sunOp:1};
-  else base = {top:'#241C36',bottom:'#4A314D',sun:'#F6ECE5',text:'#F6ECE5',stars:true,sunTop:70,sunOp:1};
+  if(hour >= 5 && hour < 8) base = {top:'#FCEEDD',mid:'#F6C9B8',bottom:'#F3E4DC',sun:'#E3A64B',text:'#3B2A35',stars:false,sunTop:58,sunOp:1};
+  else if(hour >= 8 && hour < 16) base = {top:'#DCEBF2',mid:'#EAF1EE',bottom:'#FBF6F0',sun:'#F2C868',text:'#3B2A35',stars:false,sunTop:10,sunOp:1};
+  else if(hour >= 16 && hour < 19) base = {top:'#E9D6E8',mid:'#F0B39B',bottom:'#F6E1D3',sun:'#E08A5B',text:'#3B2A35',stars:false,sunTop:50,sunOp:1};
+  else base = {top:'#1D1730',mid:'#332944',bottom:'#4A314D',sun:'#F6ECE5',text:'#F6ECE5',stars:true,sunTop:64,sunOp:1};
 
-  setSky(base.top, base.bottom, base.sun, base.text, base.stars, base.sunTop, base.sunOp);
+  setSky(base.top, base.mid, base.bottom, base.sun, base.text, base.stars, base.sunTop, base.sunOp);
   if(base.stars){
-    let starsHTML = '';
-    for(let i=0;i<40;i++){
-      const top = Math.random()*70, left = Math.random()*100, delay = (Math.random()*3).toFixed(2);
-      starsHTML += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
+    let html = '';
+    for(let i=0;i<45;i++){
+      const top = Math.random()*65, left = Math.random()*100, delay = (Math.random()*3).toFixed(2);
+      html += `<div class="star" style="top:${top}%;left:${left}%;animation-delay:${delay}s;"></div>`;
     }
-    starsEl.innerHTML = starsHTML;
+    starsEl.innerHTML = html;
   }
-  sunEl.style.left = '18%';
 
   function addClouds(count, opacity){
     for(let i=0;i<count;i++){
       const c = document.createElement('div');
       c.className='cloud';
-      const w = 90 + Math.random()*80, h = w*0.3;
-      const top = 10 + Math.random()*35;
-      const dur = 60 + Math.random()*50;
+      const w = 90 + Math.random()*90, h = w*0.3;
+      const top = 8 + Math.random()*30;
+      const dur = 70 + Math.random()*50;
       const delay = -Math.random()*40;
       c.style.cssText = `width:${w}px;height:${h}px;top:${top}%;animation-duration:${dur}s;animation-delay:${delay}s;opacity:${opacity};`;
-      hero.appendChild(c);
+      document.querySelector('.sky-layer').appendChild(c);
     }
   }
   function addRain(){
-    let dropsHTML = '';
-    for(let i=0;i<45;i++){
+    let html = '';
+    for(let i=0;i<50;i++){
       const left = Math.random()*100;
       const dur = (0.6 + Math.random()*0.6).toFixed(2);
       const delay = (Math.random()*2).toFixed(2);
-      dropsHTML += `<div class="drop" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;"></div>`;
+      html += `<div class="drop" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;"></div>`;
     }
-    rainEl.innerHTML = dropsHTML;
+    rainEl.innerHTML = html;
     rainEl.style.opacity = '1';
   }
+  function scatterHearts(count){
+    let html = '';
+    for(let i=0;i<count;i++){
+      const left = Math.random()*100;
+      const size = 10 + Math.random()*14;
+      const dur = 16 + Math.random()*14;
+      const delay = -Math.random()*24;
+      const drift = (Math.random()*60-30).toFixed(0)+'px';
+      html += `<div class="fheart" style="left:${left}%; --drift:${drift}; animation-duration:${dur}s; animation-delay:${delay}s;">
+        <svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="currentColor"/></svg>
+      </div>`;
+    }
+    heartsEl.innerHTML = html;
+  }
 
-  if(!isNight) addClouds(2, 0.55);
+  if(!isNight) addClouds(3, 0.55);
+  scatterHearts(7);
 
   // ---------- weather (Ambernath, Maharashtra) ----------
   const weatherChip = document.getElementById('weatherChip');
@@ -412,11 +374,11 @@
 
   function weatherPhrase(code, tmax){
     const hot = tmax >= 33;
-    const clearPhrases = ["clear skies today - a good one to step outside", "bright and clear out there today", "sunshine all day - enjoy it"];
-    const cloudyPhrases = ["a bit cloudy today, soft light all around", "overcast skies today, nice and mellow", "grey skies today but should stay dry"];
-    const rainPhrases = ["looks like rain today - don't forget your umbrella", "rain's likely today, carry an umbrella just in case", "expect showers today - keep that umbrella handy"];
-    const stormPhrases = ["thunderstorms expected - stay safe and dry today", "a stormy day ahead - better to stay indoors if you can"];
-    const fogPhrases = ["a foggy start to the day - take it slow if you're heading out"];
+    const clearPhrases = ["clear skies today", "bright and clear out there", "sunshine all day today"];
+    const cloudyPhrases = ["a bit cloudy today", "overcast skies, nice and mellow", "grey skies but should stay dry"];
+    const rainPhrases = ["rain likely - carry an umbrella", "showers expected, keep an umbrella handy", "looks like a wet one, don't forget your umbrella"];
+    const stormPhrases = ["thunderstorms expected - stay safe today", "a stormy day ahead, better to stay indoors"];
+    const fogPhrases = ["foggy start today - take it slow"];
 
     let phrase;
     if([95,96,99].includes(code)) phrase = stormPhrases[dayIdx % stormPhrases.length];
@@ -425,9 +387,7 @@
     else if([1,2,3].includes(code)) phrase = cloudyPhrases[dayIdx % cloudyPhrases.length];
     else phrase = clearPhrases[dayIdx % clearPhrases.length];
 
-    if(hot && ![95,96,99,51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)){
-      phrase += " - stay hydrated, Niyu";
-    }
+    if(hot && ![95,96,99,51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) phrase += " - stay hydrated";
     return phrase;
   }
 
@@ -440,20 +400,19 @@
     weatherChip.textContent = '☁ ' + weatherPhrase(code, tmax);
     weatherChip.style.display = 'inline-flex';
 
-    // adjust sky for weather, layered on top of time-of-day base
     const rainy = [51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99].includes(code);
     const cloudy = [1,2,3,45,48].includes(code);
 
     if(rainy){
-      if(isNight) setSky('#2B3040','#3E4658', base.sun, '#F0EEF2', true, base.sunTop, 0);
-      else setSky('#AEBAC9','#D7CFCB', base.sun, '#33303B', false, base.sunTop, 0);
+      if(isNight) setSky('#232840','#2E3450','#3E4658', base.sun, '#F0EEF2', true, base.sunTop, 0);
+      else setSky('#A8B5C6','#C7C4CB','#DAD1CC', base.sun, '#33303B', false, base.sunTop, 0);
       addRain();
     } else if(cloudy){
       if(!isNight){
-        setSky('#CFD9E0','#F1EAE2', base.sun, base.text, false, base.sunTop, 0.55);
+        setSky('#CFD9E0','#E4DDD6','#F1EAE2', base.sun, base.text, false, base.sunTop, 0.55);
         addClouds(2, 0.7);
       } else {
-        setSky('#2E2A40','#463B4E', base.sun, base.text, true, base.sunTop, 1);
+        setSky('#241F38','#3A2E44','#463B4E', base.sun, base.text, true, base.sunTop, 1);
       }
     }
   } catch(err){
@@ -466,60 +425,11 @@
 
   document.getElementById('dateLabel').textContent = fmtDate(now);
 
-  const envelope = document.getElementById('envelope');
-  const tapLabel = document.getElementById('tapLabel');
-  const letterPaper = document.getElementById('letterPaper');
-
-  function heartBurst(originEl){
-    const rect = originEl.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    const colors = ['#D9A441','#B98CA5','#F0C9C0'];
-    for(let i=0;i<10;i++){
-      const h = document.createElement('div');
-      const angle = (Math.PI * 2 * i / 10) + (Math.random()*0.4);
-      const dist = 60 + Math.random()*50;
-      const dx = Math.cos(angle) * dist;
-      const dy = Math.sin(angle) * dist - 20;
-      h.style.cssText = `position:fixed; left:${cx}px; top:${cy}px; width:14px; height:14px;
-        background:${colors[i%3]}; clip-path: path('M7 13C7 13 1 9 1 5.2C1 3.2 2.6 1.6 4.6 1.6C5.8 1.6 6.6 2.2 7 2.9C7.4 2.2 8.2 1.6 9.4 1.6C11.4 1.6 13 3.2 13 5.2C13 9 7 13 7 13Z');
-        z-index:40; pointer-events:none; transform: translate(-50%,-50%) scale(0.4); opacity:1;
-        transition: transform 0.9s cubic-bezier(.2,.7,.3,1), opacity 0.9s ease;`;
-      document.body.appendChild(h);
-      requestAnimationFrame(()=>{
-        h.style.transform = `translate(-50%,-50%) translate(${dx}px, ${dy}px) scale(1) rotate(${(Math.random()*60-30)}deg)`;
-        h.style.opacity = '0';
-      });
-      setTimeout(()=> h.remove(), 950);
-    }
-  }
-
-  envelope.addEventListener('click', ()=>{
-    if(envelope.classList.contains('open')) return;
-    envelope.classList.add('open');
-    tapLabel.style.opacity = '0';
-    heartBurst(envelope);
-    setTimeout(()=>{
-      letterPaper.classList.add('show');
-    }, 300);
+  // ---------- flip card ----------
+  const flipCard = document.getElementById('flipCard');
+  flipCard.addEventListener('click', ()=>{
+    flipCard.classList.toggle('flipped');
   });
-
-  function scatterHearts(container, count){
-    let html = '';
-    for(let i=0;i<count;i++){
-      const left = Math.random()*100;
-      const size = 10 + Math.random()*14;
-      const dur = 14 + Math.random()*12;
-      const delay = -Math.random()*20;
-      const drift = (Math.random()*60-30).toFixed(0)+'px';
-      html += `<div class="fheart" style="left:${left}%; --drift:${drift}; animation-duration:${dur}s; animation-delay:${delay}s;">
-        <svg width="${size}" height="${size}" viewBox="0 0 32 32" fill="none"><path d="M16 28C16 28 3 19.8 3 11.6C3 7.4 6.4 4 10.4 4C13 4 15 5.4 16 7.2C17 5.4 19 4 21.6 4C25.6 4 29 7.4 29 11.6C29 19.8 16 28 16 28Z" fill="currentColor"/></svg>
-      </div>`;
-    }
-    container.innerHTML = html;
-  }
-  scatterHearts(document.getElementById('heroHearts'), 6);
-  scatterHearts(document.getElementById('letterHearts'), 5);
 
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightboxImg');
@@ -559,7 +469,8 @@
           const img = document.createElement('img');
           img.src = src;
           img.alt = 'a memory';
-          img.addEventListener('click', ()=>{
+          img.addEventListener('click', (e)=>{
+            e.stopPropagation();
             lightboxImg.src = src;
             lightbox.classList.add('show');
           });
