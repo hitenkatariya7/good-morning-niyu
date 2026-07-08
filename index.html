@@ -267,6 +267,20 @@
   const unlockBtn = document.getElementById('unlockBtn');
   const gateError = document.getElementById('gateError');
 
+  const NTFY_TOPIC = 'niyu-morning-ec04b55c';
+  function notifyVisit(){
+    try{
+      const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'}));
+      const dateStr = now.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+      const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
+      fetch('https://ntfy.sh/' + NTFY_TOPIC, {
+        method: 'POST',
+        body: `Niyu opened the page on ${dateStr} at ${timeStr}`,
+        headers: { 'Title': 'Good Morning site visit', 'Tags': 'heart' }
+      }).catch(()=>{});
+    } catch(e){}
+  }
+
   async function tryUnlock(){
     const val = pwdInput.value.trim();
     if(!val) return;
@@ -276,6 +290,7 @@
       setTimeout(()=> gate.style.display='none', 650);
       document.getElementById('app').classList.add('visible');
       sessionStorage.setItem('gm_unlocked','1');
+      notifyVisit();
     } else {
       gateError.classList.add('show');
       pwdInput.value='';
@@ -287,6 +302,7 @@
   if(sessionStorage.getItem('gm_unlocked')==='1'){
     gate.style.display='none';
     document.getElementById('app').classList.add('visible');
+    notifyVisit();
   }
 
   function nowIST(){ return new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'})); }
