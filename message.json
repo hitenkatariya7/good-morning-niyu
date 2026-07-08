@@ -1,11 +1,11 @@
 {
   "startDate": "2026-07-02",
   "today": {
-    "date": "2026-07-02",
-    "type": "memory",
-    "message": "Good morning Niyu!\n\nHope you slept well. Quick reminder from last night - be ready with that high protein mousse today, I've been thinking about it since I sent you that reel.\n\nCan't wait to try it.",
-    "signoff": "- your favorite taste tester",
-    "photos": ["photos/2026-07-02.jpg"],
+    "date": "2026-07-08",
+    "type": "note",
+    "message": "Good morning Niyu. Bet you thought after only one day I forgot to do this. Nope, was occupied with you know what, you were on my mind every single morning.",
+    "signoff": "",
+    "photos": [],
     "memoryTitle": ""
   },
   "fallbacks": [
