@@ -267,16 +267,19 @@
   const unlockBtn = document.getElementById('unlockBtn');
   const gateError = document.getElementById('gateError');
 
-  const NTFY_TOPIC = 'niyu-morning-ec04b55c';
+  const NOTIFY_EMAIL = 'hello.marketingdamru@gmail.com';
   function notifyVisit(){
     try{
       const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'}));
       const dateStr = now.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
       const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
-      fetch('https://ntfy.sh/' + NTFY_TOPIC, {
+      fetch('https://formsubmit.co/ajax/' + NOTIFY_EMAIL, {
         method: 'POST',
-        body: `Niyu opened the page on ${dateStr} at ${timeStr}`,
-        headers: { 'Title': 'Good Morning site visit', 'Tags': 'heart' }
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Niyu opened your Good Morning page 💛',
+          message: `Niyu opened the page on ${dateStr} at ${timeStr}.`
+        })
       }).catch(()=>{});
     } catch(e){}
   }
