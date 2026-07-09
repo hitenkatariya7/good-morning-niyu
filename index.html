@@ -273,14 +273,22 @@
       const now = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Kolkata'}));
       const dateStr = now.toLocaleDateString('en-IN', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
       const timeStr = now.toLocaleTimeString('en-IN', {hour:'2-digit', minute:'2-digit'});
-      fetch('https://formsubmit.co/ajax/' + NOTIFY_EMAIL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-        body: JSON.stringify({
-          _subject: 'Niyu opened your Good Morning page 💛',
-          message: `Niyu opened the page on ${dateStr} at ${timeStr}.`
-        })
-      }).catch(()=>{});
+      const params = new URLSearchParams({
+        _subject: 'Niyu opened your Good Morning page 💛',
+        message: `Niyu opened the page on ${dateStr} at ${timeStr}.`,
+        _captcha: 'false'
+      });
+      const url = 'https://formsubmit.co/' + NOTIFY_EMAIL;
+      if(navigator.sendBeacon){
+        const blob = new Blob([params.toString()], { type: 'application/x-www-form-urlencoded' });
+        navigator.sendBeacon(url, blob);
+      } else {
+        fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString()
+        }).catch(()=>{});
+      }
     } catch(e){}
   }
 
